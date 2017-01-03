@@ -1,0 +1,16 @@
+﻿{% load i18n %}
+{% if is_paginated %}
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {% if page_obj.has_previous %}
+                <a href="{{view.success_url}}/{{ page_obj.previous_page_number }}"><</a>
+            {% endif %}
+            <span class="page-current">
+                 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a href="{{view.success_url}}/{{ page_obj.next_page_number }}">></a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

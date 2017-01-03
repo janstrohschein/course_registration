@@ -1,0 +1,56 @@
+﻿{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content%}
+<div class="container">
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Course Management</h1>
+        <p>{% trans "This tool allows you to register for courses or certifications." %} </p>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-12">
+          <h2>{% trans "Available Courses" %}</h2>
+            {% if course_list %}
+                <table class="table table-striped">
+                    <thead>
+                            <tr>
+                            <th>SKZ</th>
+                            <th>{% trans "Manufacturer" %}</th>
+                            <th>{% trans "Device" %}</th>
+                            <th>{% trans "Attachment" %}</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for course in course_list %}
+                    <tr>
+                        <td>{{course.course_name}}</td>
+                        <td>{{entry.manufacturer}}</td>
+                        <td>{{entry.device}}</td>
+                        {% comment %}
+                        <td>{{entry.configuration}}</td>
+                        {% endcomment %}
+                        {% if entry.offer_file %}
+                        <td><a href={{entry.offer_file.url}} target="_blank">Download </a> </td>
+                        {% else %}
+                        <td>&nbsp;</td>
+                        {% endif %}
+                        <td><a href="/eicos/entry/detail/{{entry.id}}/{{page_obj.number}}" class="btn btn-md btn-default"> Details </a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p> {% trans "No entries available" %}</p>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
