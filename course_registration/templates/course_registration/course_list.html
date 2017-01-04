@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content%}
+<div class="container">
+    <div class="jumbotron container-fluid">
+        <h1>Course Management</h1>
+        <p>{% trans "This tool allows you to register for courses or certifications." %} </p>
+    </div>
+        <div class="col-md-12">
+          <h2>{% trans "Available Courses" %}</h2>
+            {% if course_list %}
+                <table class="table table-striped">
+                    <thead>
+                            <tr>
+                            <th>{% trans "Name" %}</th>
+                            <th>{% trans "Progress" %}</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for course in course_list %}
+                    <tr>
+                        <td>{{course.course_name}}</td>
+                        <td>{{course.course_progress}}</td>
+                        <td><a href="/course_mgmt/course/{{course.id}}/register/" class="btn btn-md btn-default"> Register </a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p> {% trans "No entries available" %}</p>
+            {% endif %}
+        </div>
+        {% include "show_pagination.html"%}
+</div>
+{% endblock %}

@@ -19,7 +19,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^$', lambda r: HttpResponseRedirect('course_mgmt/')),
+    url(r'^$', lambda r: HttpResponseRedirect('course_mgmt/course/list')),
     url(r'^course_mgmt/', include('course_registration.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', auth_views.login, name='login'),
