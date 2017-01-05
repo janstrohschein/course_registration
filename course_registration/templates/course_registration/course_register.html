@@ -5,11 +5,11 @@
 {% block content%}
 <div class="container">
     <div class="jumbotron container-fluid">
-        <h1>Course Management</h1>
-        <p>{% trans "This tool allows you to register for courses or certifications." %} </p>
+        <h1>{{ course.course_name }}</h1>
+        <p>{{ course.course_id_id }} </p>
     </div>
         <div class="col-md-12">
-          <h2>{% trans "Available Courses" %}</h2>
+          <h2>{% trans "Required Information" %}</h2>
             {% if course_list %}
                 <table class="table table-striped">
                     <thead>
@@ -24,7 +24,7 @@
                     <tr>
                         <td>{{course.course_name}}</td>
                         <td>{{course.course_progress}}</td>
-                        <td><a href="/course_mgmt/course/{{course.slug}}" class="btn btn-md btn-default"> Register </a></td>
+                        <td><a href="/course_mgmt/course/{{course.id}}/register/" class="btn btn-md btn-default"> Register </a></td>
                     </tr>
                     {% endfor %}
                     </tbody>

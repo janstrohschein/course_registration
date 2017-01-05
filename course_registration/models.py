@@ -37,7 +37,7 @@ class Course(models.Model):
     course_status = models.CharField(max_length= 10, choices=[('active', 'active'), ('inactive', 'inactive')])
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     required_fields = models.ManyToManyField('Field')
-    course_slug = models.SlugField(max_length=200, blank=True)
+    slug = models.SlugField(max_length=200, blank=True)
 
     def __str__(self):
         return self.course_name
@@ -46,14 +46,14 @@ class Course(models.Model):
         slug = slugify(self.course_name)
         unique_slug = slug
         num = 1
-        while Course.objects.filter(course_slug=unique_slug).exists():
+        while Course.objects.filter(slug=unique_slug).exists():
             unique_slug = '{}-{}'.format(slug, num)
             num += 1
         return unique_slug
 
     def save(self, *args, **kwargs):
-        if not self.course_slug:
-            self.course_slug = self._get_unique_slug()
+        if not self.slug:
+            self.slug = self._get_unique_slug()
         super().save()
 
 class Progress(models.Model):
