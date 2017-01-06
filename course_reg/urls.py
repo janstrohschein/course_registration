@@ -16,13 +16,15 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^$', lambda r: HttpResponseRedirect('course_mgmt/courses')),
     url(r'^course_mgmt/', include('course_registration.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, name='logout'),
-
+    url(r'^login/$', auth_views.login, {'template_name': 'login.html'},
+        name='login'),
+    url(r'^logout/$', auth_views.logout,
+        {'next_page': 'course_list'}, name='logout'),
 ]

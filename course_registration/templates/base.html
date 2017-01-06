@@ -56,7 +56,9 @@
               </li>
               <li><a href="/eicos/createReport" >{% trans "Reports" %}</a></li>
               <li><a href="/eicos/review/list" >{% trans "Review" %}</a></li>
-                
+                <li>  {% block toggle_login %}
+                      {% include "toggle_login.html" %}
+                      {% endblock %}</li>
             </ul>
 
           </div><!--/.nav-collapse -->
