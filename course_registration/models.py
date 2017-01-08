@@ -10,6 +10,7 @@ class User(models.Model):
     def __str__(self):
         return self.user_name
 
+
 class User_Course_Registration(models.Model):
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
@@ -32,9 +33,10 @@ class User_Course_Progress(models.Model):
         rep += str(self.timestamp) + ')'
         return  rep
 
+
 class Course(models.Model):
     course_name = models.CharField(max_length=200)
-    course_status = models.CharField(max_length= 10, choices=[('active', 'active'), ('inactive', 'inactive')])
+    course_status = models.CharField(max_length= 10, choices=[('active', 'active'), ('inactive', 'inactive')], default='active')
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     required_fields = models.ManyToManyField('Field')
     slug = models.SlugField(max_length=200, blank=True)
@@ -56,6 +58,7 @@ class Course(models.Model):
             self.slug = self._get_unique_slug()
         super().save()
 
+
 class Progress(models.Model):
     progress_name = models.CharField(max_length=200)
     progress_desc = models.CharField(max_length=200)
@@ -63,14 +66,11 @@ class Progress(models.Model):
     def __str__(self):
         return self.progress_name
 
+
 class Field(models.Model):
     field_name = models.CharField(max_length=200)
     field_type = models.CharField(max_length=200)
-    field_desc = models.CharField(max_length=200)
+    field_desc = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.field_name
-
-# class Field_Required(models.Model):
-#     field_id = models.ForeignKey('Field', on_delete=models.CASCADE)
-#     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block content%}
+    <div class="container">
+        <div class="jumbotron container-fluid">
+            <h1>Create new Course</h1>
+        </div>
+
+        <div>
+            <form action="add" method="post">
+            {% csrf_token %}
+            {{ form|crispy}}
+            <input type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

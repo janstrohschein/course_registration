@@ -14,11 +14,11 @@ class CourseList(generic.ListView):
         new_context = Course.objects.filter(course_status='active')
         return new_context
 
+
 class CourseDetail(generic.DetailView):
     model = Course
     template_name = 'course_registration/course_detail.html'
     fields = '__all__'
-
 
 
 class CourseRegister(generic.CreateView):
