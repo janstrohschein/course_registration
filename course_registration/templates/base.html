@@ -36,29 +36,11 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li class="dropdown"><a  href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Overview" %}<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="/eicos/entry/list">{% trans "Entries" %}</a></li>
-                    <li><a href="/eicos/project/list">{% trans "Projects" %}</a></li>
-                </ul>
-              </li>
-              <li class="dropdown"><a  href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Create EICOS" %} <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="/eicos/createEICOS/db">{% trans "Choose Devices" %}</a></li>
-                    <li><a href="/eicos/createEICOS/mto">{% trans "Choose MTO" %}</a></li>
-                </ul>
-              </li>
-              <li class="dropdown"><a  href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Upload <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="/eicos/entry/add">{% trans "Upload Offers" %}</a></li>
-                    <li><a href="/eicos/project/add">{% trans "Upload a Project" %}</a></li>
-                </ul>
-              </li>
-              <li><a href="/eicos/createReport" >{% trans "Reports" %}</a></li>
-              <li><a href="/eicos/review/list" >{% trans "Review" %}</a></li>
-                <li>  {% block toggle_login %}
-                      {% include "toggle_login.html" %}
-                      {% endblock %}</li>
+              <li><a  href="/course_mgmt/courses">{% trans "Course List" %}</a></li>
+              <li><a  href="/course_mgmt/courses">{% trans "My Courses" %}</a></li>
+              {% block toggle_login %}
+              {% include "toggle_login.html" %}
+              {% endblock %}
             </ul>
 
           </div><!--/.nav-collapse -->
