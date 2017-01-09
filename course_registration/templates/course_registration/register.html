@@ -7,13 +7,13 @@
 <div class="container">
     <div class="col-md-8">
         {% block heading %}
-            <h2>Login</h2>
+            <h2>Register a new User</h2>
         {% endblock %}
-        <form action="{% url "login" %}" method="post" accept-charset="utf-8">
+        <form action="{% url "register" %}" method="post" accept-charset="utf-8">
             {{ form|crispy }}
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
-            <input class="btn btn-default" type="submit" value="Login">
+            <input class="btn btn-default" type="submit" value="Register">
         </form>
     </div>
 

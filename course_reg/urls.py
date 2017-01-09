@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import views as auth_views
+from course_registration import views
 
 urlpatterns = [
     url(r'^$', lambda r: HttpResponseRedirect('course_mgmt/courses')),
     url(r'^course_mgmt/', include('course_registration.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^register$', views.UserAdd.as_view() , {'template_name': 'register.html'},
+        name='register'),
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'},
         name='login'),
     url(r'^logout/$', auth_views.logout,
