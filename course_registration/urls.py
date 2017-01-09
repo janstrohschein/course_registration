@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
     url(r'^courses$', views.CourseList.as_view(), name='course_list'),
     url(r'^courses/(?P<page>\d+)$', views.CourseList.as_view(), name='course_list'),
-    url(r'^course/detail/(?P<slug>[-\w]+)/$', views.CourseDetail.as_view(), name='course_detail'),
+    url(r'^course/(?P<slug>[-\w]+)/$', views.CourseDetail.as_view(), name='course_detail'),
+    url(r'^my_courses$', views.UserCourses.as_view(), name='my_courses'),
 ]
