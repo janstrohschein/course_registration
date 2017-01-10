@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views import generic
 import sys
 from django.contrib.auth import get_user
 from django.http import HttpResponseRedirect
-from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
+from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field
 from course_registration.forms import MyUserCreationForm
+
 
 class UserAdd(generic.CreateView):
     form_class = MyUserCreationForm
@@ -32,14 +32,15 @@ class CourseDetail(generic.DetailView):
     fields = '__all__'
     sucess_message = 'Registered successfully!'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         # get number of required fields
         # if submitted number is equal proceed registration
         course = Course.objects.get(slug=kwargs['slug'])
         count_required_fields = course.required_fields.count()
 
         # +1 because request.POST contains also the csrf token
-        if count_required_fields + 1 == len(request.POST):
+        if count_required_fields + 1 == len(request.POST) and \
+                course.seats_cur < course.seats_max:
 
         # for every submitted field the field, field value, user and course will
         # be inserted into CourseRegistration
@@ -60,11 +61,16 @@ class CourseDetail(generic.DetailView):
                     except:
                         print(sys.exc_info())
 
-            prog_values = {}
-            prog_values['user_id'] = user
-            prog_values['course_id'] = course
-            prog_values['user_progress_id'] = course.course_progress
-            prog_values['progress_reached'] = True
+            # get_or_create returns the object and information if it was created
+            if new_reg[1] == True:
+                course.seats_cur += 1
+                course.save()
+
+            prog_values = {'user_id': user,
+                           'course_id': course,
+                           'user_progress_id': course.course_progress,
+                           'progress_reached': True}
+
             new_prog = User_Course_Progress.objects.get_or_create(**prog_values)
 
         return HttpResponseRedirect('/course_mgmt/my_courses')
@@ -81,3 +87,15 @@ class UserCourses(generic.DetailView):
         user = get_user(request)
         courses = User_Course_Progress.objects.filter(user_id=user).distinct()
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
+
+class TeacherCourses(generic.ListView):
+    model = Course
+    template_name = 'course_registration/teacher_courses.html'
+    context_object_name = 'course_list'
+    success_url = '/course_mgmt/teacher_courses'
+    paginate_by = 10
+
+    def get_queryset(self):
+        teacher = get_user(self.request)
+        new_context = Course.objects.filter(course_teacher=teacher)
+        return new_context

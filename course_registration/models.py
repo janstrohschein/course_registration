@@ -37,8 +37,11 @@ class User_Course_Progress(models.Model):
 
 class Course(models.Model):
     course_name = models.CharField(max_length=200)
+    course_teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     course_status = models.CharField(max_length= 10, choices=[('active', 'active'), ('inactive', 'inactive')], default='active')
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
+    seats_max = models.IntegerField()
+    seats_cur = models.IntegerField(default=0)
     required_fields = models.ManyToManyField('Field')
     slug = models.SlugField(max_length=200, blank=True)
 
