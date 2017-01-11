@@ -37,7 +37,13 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a  href="/course_mgmt/courses">{% trans "Course List" %}</a></li>
-              <li><a  href="/course_mgmt/my_courses">{% trans "My Courses" %}</a></li>
+              {% if user.is_authenticated %}
+                <li><a  href="/course_mgmt/my_courses">{% trans "My Courses" %}</a></li>
+              {% endif %}
+              {% if user.groups.count > 0 %}
+                <li><a  href="/course_mgmt/teacher_courses">{% trans "Teaching Courses" %}</a></li>
+              {% endif %}
+
               {% block toggle_login %}
               {% include "toggle_login.html" %}
               {% endblock %}

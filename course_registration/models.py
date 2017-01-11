@@ -2,21 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
-# Create your models here.
-# class User(models.Model):
-#     user_role = models.CharField(max_length=10, choices=[('user', 'User'), ('teacher', 'Teacher')], default='User')
-#     user_name = models.CharField(max_length=200, unique=True)
-#     user_email = models.EmailField(unique=True)
-#
-#     def __str__(self):
-#         return self.user_name
-
 
 class User_Course_Registration(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
     field_id = models.ForeignKey('Field', on_delete=models.CASCADE)
     field_value = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        rep = self.course_id.course_name + ', '
+        rep += self.user_id.username + ', '
+        rep += self.field_id.field_name + ', '
+        rep += self.field_value + ' ('
+        rep += str(self.timestamp) + ')'
+        return  rep
 
 
 class User_Course_Progress(models.Model):

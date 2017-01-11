@@ -2,9 +2,20 @@ from django.shortcuts import render
 from django.views import generic
 import sys
 from django.contrib.auth import get_user
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
 from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field
+from django.contrib.auth.models import User
 from course_registration.forms import MyUserCreationForm
+from django.contrib.messages.views import SuccessMessageMixin
+
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
 
 
 class UserAdd(generic.CreateView):
@@ -26,11 +37,11 @@ class CourseList(generic.ListView):
         return new_context
 
 
-class CourseDetail(generic.DetailView):
+class CourseDetail(SuccessMessageMixin, generic.DetailView):
     model = Course
     template_name = 'course_registration/course_detail.html'
     fields = '__all__'
-    sucess_message = 'Registered successfully!'
+    success_message = 'Registered successfully!'
 
     def post(self, request, **kwargs):
         # get number of required fields
@@ -44,7 +55,9 @@ class CourseDetail(generic.DetailView):
 
         # for every submitted field the field, field value, user and course will
         # be inserted into CourseRegistration
-            user =  get_user(request)
+            user = get_user(request)
+            # if user.pk is None:
+            #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
 
             for entry in request.POST:
                 if entry != 'csrfmiddlewaretoken':
@@ -76,7 +89,7 @@ class CourseDetail(generic.DetailView):
         return HttpResponseRedirect('/course_mgmt/my_courses')
 
 
-class UserCourses(generic.DetailView):
+class UserCourses(LoginRequiredMixin, generic.DetailView):
     model = User_Course_Progress
     template_name = 'course_registration/my_courses.html'
     context_object_name = 'course_list'
@@ -95,7 +108,33 @@ class TeacherCourses(generic.ListView):
     success_url = '/course_mgmt/teacher_courses'
     paginate_by = 10
 
+    @method_decorator(user_passes_test(lambda u: u.groups.filter(name='teacher').count() == 1))
+    def dispatch(self, *args, **kwargs):
+        return super(TeacherCourses, self).dispatch(*args, **kwargs)
+
     def get_queryset(self):
         teacher = get_user(self.request)
         new_context = Course.objects.filter(course_teacher=teacher)
         return new_context
+
+class TeacherCoursesDetail(generic.DetailView):
+    model = User_Course_Registration
+    template_name = 'course_registration/teacher_courses_detail.html'
+    context_object_name = 'student_list'
+
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(slug=kwargs['slug'])
+        fields = course.required_fields.all()
+        course = User_Course_Registration.objects.filter(course_id =course.id).distinct()
+        student_list = {}
+        for entry in course:
+            if entry.user_id_id not in student_list:
+                student_list[entry.user_id_id] = {}
+            student_list[entry.user_id_id][entry.field_id_id] = entry.field_value
+
+
+        return render(request, 'course_registration/teacher_courses_detail.html', {'student_list': student_list, 'field_list': fields})
+
+    # def get_queryset(self):
+    #     new_context = Course.objects.filter(slug=self.kwargs['slug'])
+    #     return new_context

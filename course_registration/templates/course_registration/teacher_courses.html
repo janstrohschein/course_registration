@@ -22,7 +22,7 @@
 
                     {% for course in course_list %}
                     <tr>
-                        <td>{{course.course_name }}</td>
+                        <td><a href="/course_mgmt/teacher_courses_detail/{{course.slug}}"> {{course.course_name }} </a></td>
                         <td>{{course.course_progress}}</td>
                         <td>{{course.course_status}}</td>
                         <td>{{course.seats_cur}} / {{ course.seats_max }}</td>

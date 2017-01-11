@@ -1,0 +1,39 @@
+﻿{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content%}
+<div class="container">
+    <div class="jumbotron container-fluid">
+        <h1>Course overview</h1>
+    </div>
+        <div class="col-md-12">
+            {% if student_list %}
+                <table class="table table-striped">
+                    <thead>
+                            <tr>
+                            {% for field in field_list%}
+                            <th>{% trans field.field_name %}</th>
+                            {% endfor %}
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for student, values in student_list.items %}
+                        <tr>
+                        {% for key, item in values.items%}
+                            <td>{{ item }}</td>
+
+                        {% endfor %}
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p> {% trans "No entries available" %}</p>
+            {% endif %}
+        </div>
+        {% include "show_pagination.html"%}
+</div>
+{% endblock %}
