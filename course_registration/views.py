@@ -4,11 +4,13 @@ import sys
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
-from django.http import HttpResponseRedirect
-from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field
+from django.http import HttpResponseRedirect, HttpResponse
+from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
 from django.contrib.auth.models import User
 from course_registration.forms import MyUserCreationForm
 from django.contrib.messages.views import SuccessMessageMixin
+from course_registration.ExcelWriter import ExcelWriter
+from collections import OrderedDict
 
 
 class LoginRequiredMixin(object):
@@ -124,17 +126,50 @@ class TeacherCoursesDetail(generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(slug=kwargs['slug'])
+        progress = Progress.objects.all()
         fields = course.required_fields.all()
-        course = User_Course_Registration.objects.filter(course_id =course.id).distinct()
+        course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct()
         student_list = {}
-        for entry in course:
+        for entry in course_details:
             if entry.user_id_id not in student_list:
                 student_list[entry.user_id_id] = {}
             student_list[entry.user_id_id][entry.field_id_id] = entry.field_value
 
 
-        return render(request, 'course_registration/teacher_courses_detail.html', {'student_list': student_list, 'field_list': fields})
+        return render(request, 'course_registration/teacher_courses_detail.html', \
+                      {'course': course, 'student_list': student_list, 'field_list': fields, 'progress_list': progress})
 
-    # def get_queryset(self):
-    #     new_context = Course.objects.filter(slug=self.kwargs['slug'])
-    #     return new_context
+    def post(self, request, *args, **kwargs):
+        course = Course.objects.get(slug=kwargs['slug'])
+        progress = Progress.objects.all()
+        fields = course.required_fields.all()
+        course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct().values()
+        student_list = {}
+
+        field_list = []
+        for field in fields:
+            field_list.append(str(field))
+
+        for entry in course_details:
+            if entry['user_id_id'] not in student_list:
+                student_list[entry['user_id_id']] = {}
+            student_list[entry['user_id_id']][str(entry['field_id_id'])] = entry['field_value']
+
+        for student in student_list:
+            student_list[student] = sorted(student_list[student].items())
+
+        new_excel = ExcelWriter()
+        new_excel.write_student_list(course, field_list, student_list)
+        new_excel.out_wb.close()
+
+        # sets filename
+        filename = str(course) + '.xlsx'
+
+        """sets the file content type an as excel spreadsheet,
+        and sets it to be returned as a http response"""
+        # returns the file
+        response = HttpResponse(new_excel.output.getvalue(), content_type="application/ms-excel")
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        return response
+

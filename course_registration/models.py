@@ -18,6 +18,9 @@ class User_Course_Registration(models.Model):
         rep += str(self.timestamp) + ')'
         return  rep
 
+    class Meta:
+        ordering = ['id']
+
 
 class User_Course_Progress(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

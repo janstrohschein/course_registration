@@ -35,5 +35,9 @@
             {% endif %}
         </div>
         {% include "show_pagination.html"%}
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" value="Export">
+        </form>
 </div>
 {% endblock %}
