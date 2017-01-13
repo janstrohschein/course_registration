@@ -33,11 +33,14 @@
             {% else %}
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
+            {% include "show_pagination.html"%}
+            {% include "show_message.html"%}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Export">
+            </form>
+
         </div>
-        {% include "show_pagination.html"%}
-        <form method="post">
-            {% csrf_token %}
-            <input type="submit" value="Export">
-        </form>
+
 </div>
 {% endblock %}

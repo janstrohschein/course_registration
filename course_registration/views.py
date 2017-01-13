@@ -3,6 +3,7 @@ from django.views import generic
 import sys
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse
 from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
@@ -119,10 +120,14 @@ class TeacherCourses(generic.ListView):
         new_context = Course.objects.filter(course_teacher=teacher)
         return new_context
 
-class TeacherCoursesDetail(generic.DetailView):
+class TeacherCoursesDetail(SuccessMessageMixin, generic.DetailView):
     model = User_Course_Registration
     template_name = 'course_registration/teacher_courses_detail.html'
     context_object_name = 'student_list'
+
+    def get_success_url(self, request, *args, **kwargs):
+
+        return '/course_mgmt/teacher_courses_detail/' + kwargs['slug']
 
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(slug=kwargs['slug'])
@@ -140,6 +145,7 @@ class TeacherCoursesDetail(generic.DetailView):
                       {'course': course, 'student_list': student_list, 'field_list': fields, 'progress_list': progress})
 
     def post(self, request, *args, **kwargs):
+
         course = Course.objects.get(slug=kwargs['slug'])
         progress = Progress.objects.all()
         fields = course.required_fields.all()
@@ -161,6 +167,8 @@ class TeacherCoursesDetail(generic.DetailView):
         new_excel = ExcelWriter()
         new_excel.write_student_list(course, field_list, student_list)
         new_excel.out_wb.close()
+
+        messages.success(request, 'Export finished!')
 
         # sets filename
         filename = str(course) + '.xlsx'
