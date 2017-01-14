@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 import sys
-from django.contrib.auth import get_user
+from django.contrib.auth import get_user, authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils.decorators import method_decorator
@@ -26,6 +26,13 @@ class UserAdd(generic.CreateView):
     template_name = 'course_registration/register.html'
     success_url = '/login/'
     success_message = 'User created'
+
+    def form_valid(self, form):
+        valid = super(UserAdd, self).form_valid(form)
+        username, password = form.cleaned_data.get('username'), form.cleaned_data.get('password')
+        new_user = authenticate(username=username, password=password)
+        login(self.request, new_user)
+        return valid
 
 
 class CourseList(generic.ListView):
@@ -104,6 +111,7 @@ class UserCourses(LoginRequiredMixin, generic.DetailView):
         courses = User_Course_Progress.objects.filter(user_id=user).distinct()
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
 
+
 class TeacherCourses(generic.ListView):
     model = Course
     template_name = 'course_registration/teacher_courses.html'
@@ -119,6 +127,29 @@ class TeacherCourses(generic.ListView):
         teacher = get_user(self.request)
         new_context = Course.objects.filter(course_teacher=teacher)
         return new_context
+
+
+class TeacherCoursesAdd(generic.CreateView):
+    model = Course
+    template_name = 'course_registration/course_add.html'
+    fields = ('course_name', 'course_progress', 'seats_max', 'required_fields')
+    success_url = '/course_mgmt/teacher_courses'
+
+    @method_decorator(user_passes_test(lambda u: u.groups.filter(name='teacher').count() == 1))
+    def dispatch(self, *args, **kwargs):
+        return super(TeacherCoursesAdd, self).dispatch(*args, **kwargs)
+
+    def post(self, request, **kwargs):
+        att = {}
+        att['course_name'] = request.POST['course_name']
+        att['course_teacher'] = get_user(request)
+        att['course_progress'] = Progress.objects.get(id = request.POST['course_progress'])
+        att['seats_max'] = request.POST['seats_max']
+        course = Course.objects.create(**att)
+        course.required_fields.add(*request.POST.getlist('required_fields'))
+
+        return HttpResponseRedirect('/course_mgmt/teacher_courses')
+
 
 class TeacherCoursesDetail(SuccessMessageMixin, generic.DetailView):
     model = User_Course_Registration
