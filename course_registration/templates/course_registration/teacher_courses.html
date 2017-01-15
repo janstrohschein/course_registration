@@ -15,6 +15,7 @@
                             <th>{% trans "Name" %}</th>
                             <th>{% trans "Progress" %}</th>
                             <th>{% trans "Status" %}</th>
+                            <th>{% trans "URL" %}</th>
                             <th>{% trans "Seats" %}</th>
                             </tr>
                     </thead>
@@ -25,6 +26,7 @@
                         <td><a href="/course_mgmt/teacher_courses_detail/{{course.slug}}"> {{course.course_name }} </a></td>
                         <td>{{course.course_progress}}</td>
                         <td>{{course.course_status}}</td>
+                        <td>/course_mgmt/course/{{ course.slug }}</td>
                         <td>{{course.seats_cur}} / {{ course.seats_max }}</td>
                     </tr>
                     {% endfor %}
