@@ -24,14 +24,16 @@ class LoginRequiredMixin(object):
 class UserAdd(generic.CreateView):
     form_class = MyUserCreationForm
     template_name = 'course_registration/register.html'
-    success_url = '/login/'
+    success_url = 'course_mgmt/courses'
     success_message = 'User created'
 
     def form_valid(self, form):
         valid = super(UserAdd, self).form_valid(form)
+        form.save()
         username, password = form.cleaned_data.get('username'), form.cleaned_data.get('password')
-        new_user = authenticate(username=username, password=password)
-        login(self.request, new_user)
+        user = User.objects.get(username = username)
+        authenticate(username=user, password=password)
+        login(self.request, user)
         return valid
 
 

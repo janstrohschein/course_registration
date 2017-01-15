@@ -132,3 +132,7 @@ LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'course_list'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.AllowAllUsersModelBackend',
+    )
