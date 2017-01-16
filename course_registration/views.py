@@ -8,7 +8,8 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse
 from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
 from django.contrib.auth.models import User
-from course_registration.forms import MyUserCreationForm
+from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm
+from django.forms.widgets import CheckboxSelectMultiple
 from django.contrib.messages.views import SuccessMessageMixin
 from course_registration.ExcelWriter import ExcelWriter
 from collections import OrderedDict
@@ -134,8 +135,9 @@ class TeacherCourses(generic.ListView):
 class TeacherCoursesAdd(generic.CreateView):
     model = Course
     template_name = 'course_registration/course_add.html'
-    fields = ('course_name', 'course_progress', 'seats_max', 'required_fields')
+    form_class = TeacherCoursesAddForm
     success_url = '/course_mgmt/teacher_courses'
+
 
     @method_decorator(user_passes_test(lambda u: u.groups.filter(name='teacher').count() == 1))
     def dispatch(self, *args, **kwargs):

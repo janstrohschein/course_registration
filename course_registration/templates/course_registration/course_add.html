@@ -10,9 +10,9 @@
         </div>
 
         <div>
-            <form action="" method="post">
+            <form action="{% url "teacher_courses_add" %}" method="post">
             {% csrf_token %}
-            {{ form|crispy}}
+            {{ form|crispy }}
             <input type="submit" class="btn btn-default" value="Submit" />
             </form>
         </div>
