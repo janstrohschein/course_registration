@@ -8,11 +8,10 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse
 from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
 from django.contrib.auth.models import User
-from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm
-from django.forms.widgets import CheckboxSelectMultiple
+from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm, CourseProgressUpdateForm
 from django.contrib.messages.views import SuccessMessageMixin
 from course_registration.ExcelWriter import ExcelWriter
-from collections import OrderedDict
+
 
 
 class LoginRequiredMixin(object):
@@ -155,20 +154,16 @@ class TeacherCoursesAdd(generic.CreateView):
         return HttpResponseRedirect('/course_mgmt/teacher_courses')
 
 
-class TeacherCoursesDetail(SuccessMessageMixin, generic.DetailView):
-    model = User_Course_Registration
+class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
+    model = Course
     template_name = 'course_registration/teacher_courses_detail.html'
-    context_object_name = 'student_list'
-
-    def get_success_url(self, request, *args, **kwargs):
-
-        return '/course_mgmt/teacher_courses_detail/' + kwargs['slug']
+    form_class = CourseProgressUpdateForm
 
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(slug=kwargs['slug'])
-        progress = Progress.objects.all()
         fields = course.required_fields.all()
         course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct()
+        form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
         student_list = {}
         for entry in course_details:
             if entry.user_id_id not in student_list:
@@ -177,42 +172,61 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.DetailView):
 
 
         return render(request, 'course_registration/teacher_courses_detail.html', \
-                      {'course': course, 'student_list': student_list, 'field_list': fields, 'progress_list': progress})
+
+                      {'form': form,'course': course, 'student_list': student_list, 'field_list': fields})
 
     def post(self, request, *args, **kwargs):
 
         course = Course.objects.get(slug=kwargs['slug'])
         progress = Progress.objects.all()
-        fields = course.required_fields.all()
-        course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct().values()
-        student_list = {}
 
-        field_list = []
-        for field in fields:
-            field_list.append(str(field))
+        if 'update' in request.POST:
+            ## write new course progress with request.POST['course_progress']
+            old_progress = course.course_progress
+            new_progress = Progress.objects.get(id = request.POST['course_progress'])
+            course.course_progress = new_progress
+            course.save()
+            ## write new student progress entry for all students that reached the last "milestone"
+            student_list = User_Course_Progress.objects.filter(course_id = course.id, user_progress_id = old_progress.id, progress_reached = True)
+            for student in student_list:
+                att = {'user_id': student.user_id,
+                        'course_id': student.course_id,
+                       'user_progress_id': new_progress}
+                User_Course_Progress.objects.get_or_create(**att)
 
-        for entry in course_details:
-            if entry['user_id_id'] not in student_list:
-                student_list[entry['user_id_id']] = {}
-            student_list[entry['user_id_id']][str(entry['field_id_id'])] = entry['field_value']
+            return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
-        for student in student_list:
-            student_list[student] = sorted(student_list[student].items())
 
-        new_excel = ExcelWriter()
-        new_excel.write_student_list(course, field_list, student_list)
-        new_excel.out_wb.close()
+        elif 'export' in request.POST:
+            fields = course.required_fields.all()
+            course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct().values()
+            student_list = {}
+            field_list = []
 
-        messages.success(request, 'Export finished!')
+            for field in fields:
+                field_list.append(str(field))
 
-        # sets filename
-        filename = str(course) + '.xlsx'
+            for entry in course_details:
+                if entry['user_id_id'] not in student_list:
+                    student_list[entry['user_id_id']] = {}
+                student_list[entry['user_id_id']][str(entry['field_id_id'])] = entry['field_value']
 
-        """sets the file content type an as excel spreadsheet,
-        and sets it to be returned as a http response"""
-        # returns the file
-        response = HttpResponse(new_excel.output.getvalue(), content_type="application/ms-excel")
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            for student in student_list:
+                student_list[student] = sorted(student_list[student].items())
 
-        return response
+            new_excel = ExcelWriter()
+            new_excel.write_student_list(course, field_list, student_list)
+            new_excel.out_wb.close()
 
+            messages.success(request, 'Export finished!')
+
+            # sets filename
+            filename = str(course) + '.xlsx'
+
+            """sets the file content type an as excel spreadsheet,
+            and sets it to be returned as a http response"""
+            # returns the file
+            response = HttpResponse(new_excel.output.getvalue(), content_type="application/ms-excel")
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+            return response
