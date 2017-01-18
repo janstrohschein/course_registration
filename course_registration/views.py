@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
+from django.db.models import Max
 import sys
 from django.contrib.auth import get_user, authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -110,7 +111,7 @@ class UserCourses(LoginRequiredMixin, generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         user = get_user(request)
-        courses = User_Course_Progress.objects.filter(user_id=user).distinct()
+        courses = User_Course_Progress.objects.filter(user_id=user, active=True)
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
 
 
@@ -186,13 +187,22 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             new_progress = Progress.objects.get(id = request.POST['course_progress'])
             course.course_progress = new_progress
             course.save()
+
             ## write new student progress entry for all students that reached the last "milestone"
-            student_list = User_Course_Progress.objects.filter(course_id = course.id, user_progress_id = old_progress.id, progress_reached = True)
+            student_list = User_Course_Progress.objects.filter(course_id = course.id, \
+                                        active = True, progress_reached = True)
+            student_ids = []
             for student in student_list:
+                student_ids.append(student.user_id)
+
                 att = {'user_id': student.user_id,
-                        'course_id': student.course_id,
+                       'course_id': student.course_id,
                        'user_progress_id': new_progress}
                 User_Course_Progress.objects.get_or_create(**att)
+
+            ## deactivate old progress, only for students that got an update
+            User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
+                                                user_progress_id = old_progress).update(active=False)
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 

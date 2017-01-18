@@ -27,6 +27,7 @@ class User_Course_Progress(models.Model):
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
     user_progress_id = models.ForeignKey('Progress', on_delete=models.CASCADE)
     progress_reached = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
