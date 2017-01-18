@@ -5,16 +5,13 @@
 {% block content%}
 <div class="container">
     <div class="jumbotron container-fluid">
-        <h1>My Courses</h1>
-        <p>{% trans "Overview of your currently registered courses." %} </p>
+        <h1>Course History</h1>
     </div>
         <div class="col-md-12">
-          <h2>{% trans "Registered Courses" %}</h2>
-            {% if course_list %}
+            {% if progress_list %}
                 <table class="table table-striped">
                     <thead>
                             <tr>
-                            <th>{% trans "Name" %}</th>
                             <th>{% trans "Progress" %}</th>
                             <th>{% trans "Progress reached" %}</th>
                             <th>{% trans "Timestamp" %}</th>
@@ -22,14 +19,12 @@
                     </thead>
                     <tbody>
 
-                    {% for course in course_list %}
-                    <tr>
-                        <td>{{course.course_id }}</td>
-                        <td>{{course.user_progress_id}}</td>
-                        <td>{{course.progress_reached}}</td>
-                        <td>{{course.timestamp}}</td>
-                        <td><a href="{% url "student_courses_detail" course.course_id.slug user.id%}">Details</a></td>
-                    </tr>
+                    {% for progress in progress_list %}
+                            <tr>
+                                <td>{{progress.user_progress_id}}</td>
+                                <td>{{progress.progress_reached}}</td>
+                                <td>{{progress.timestamp}}</td>
+                            </tr>
                     {% endfor %}
                     </tbody>
                 </table>

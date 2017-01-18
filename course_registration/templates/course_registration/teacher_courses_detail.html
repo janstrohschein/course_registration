@@ -28,10 +28,12 @@
 
                     {% for student, values in student_list.items %}
                         <tr>
+                        <td>student</td>
                         {% for key, item in values.items%}
                             <td>{{ item }}</td>
 
                         {% endfor %}
+                        <td><a href="{% url "student_courses_detail" course.slug student%}">Details</a></td>
                         </tr>
 
                     {% endfor %}

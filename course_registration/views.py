@@ -240,3 +240,17 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
             return response
+
+
+class StudentCoursesDetail(generic.View):
+    template_name = 'course_registration/student_courses_detail.html'
+    context_object_name = 'progress_list'
+
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(id = kwargs['user'])
+
+        course = Course.objects.get(slug=kwargs['slug'])
+        progress_list = User_Course_Progress.objects.filter(user_id= user, course_id= course)
+
+        return render(request, 'course_registration/student_courses_detail.html', \
+                      {'progress_list': progress_list})

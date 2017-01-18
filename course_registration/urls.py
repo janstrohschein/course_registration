@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^teacher_courses/add$', views.TeacherCoursesAdd.as_view(), name='teacher_courses_add'),
 
     url(r'^teacher_courses_detail/(?P<slug>[-\w]+)$', views.TeacherCoursesDetail.as_view(), name='teacher_courses_detail'),
-
+    url(r'^student_courses_detail/(?P<slug>[-\w]+)/(?P<user>\d+)$', views.StudentCoursesDetail.as_view(), name='student_courses_detail'),
+    
 
 ]
