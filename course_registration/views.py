@@ -164,12 +164,20 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         course = Course.objects.get(slug=kwargs['slug'])
         fields = course.required_fields.all()
         course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct()
+        course_progress = list(User_Course_Progress.objects.filter(course_id =course.id, active = True))
+
         form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
         student_list = {}
         for entry in course_details:
             if entry.user_id_id not in student_list:
                 student_list[entry.user_id_id] = {}
             student_list[entry.user_id_id][entry.field_id_id] = entry.field_value
+
+        for progress in course_progress:
+            if progress.user_id_id in student_list:
+                student_list[progress.user_id_id]['progress'] = progress.user_progress_id.progress_name
+                student_list[progress.user_id_id]['progress_reached'] = progress.progress_reached
+
 
 
         return render(request, 'course_registration/teacher_courses_detail.html', \

@@ -22,13 +22,14 @@
                             {% for field in field_list%}
                             <th>{% trans field.field_name %}</th>
                             {% endfor %}
+                            <th>{% trans "Progress" %}</th>
+                            <th>{% trans "Progress reached" %}</th>
                             </tr>
                     </thead>
                     <tbody>
 
                     {% for student, values in student_list.items %}
                         <tr>
-                        <td>student</td>
                         {% for key, item in values.items%}
                             <td>{{ item }}</td>
 
