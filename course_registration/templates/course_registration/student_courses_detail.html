@@ -22,7 +22,11 @@
                     {% for progress in progress_list %}
                             <tr>
                                 <td>{{progress.user_progress_id}}</td>
-                                <td>{{progress.progress_reached}}</td>
+                                {% if progress.progress_reached == True %}
+                                    <td><input type="checkbox" checked ></td>
+                                {% else %}
+                                    <td><input type="checkbox"></td>
+                                {% endif %}
                                 <td>{{progress.timestamp}}</td>
                             </tr>
                     {% endfor %}

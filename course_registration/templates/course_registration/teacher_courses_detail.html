@@ -23,7 +23,7 @@
                             <th>{% trans field.field_name %}</th>
                             {% endfor %}
                             <th>{% trans "Progress" %}</th>
-                            <th>{% trans "Progress reached" %}</th>
+
                             </tr>
                     </thead>
                     <tbody>
@@ -31,7 +31,15 @@
                     {% for student, values in student_list.items %}
                         <tr>
                         {% for key, item in values.items%}
-                            <td>{{ item }}</td>
+                            {% if key == 'progress_reached' %}
+                                {% if item == True %}
+                                    <td><input type="checkbox" checked ></td>
+                                {% else %}
+                                    <td><input type="checkbox"></td>
+                                {% endif %}
+                            {% else %}
+                                <td>{{ item }}</td>
+                            {% endif %}
 
                         {% endfor %}
                         <td><a href="{% url "student_courses_detail" course.slug student%}">Details</a></td>

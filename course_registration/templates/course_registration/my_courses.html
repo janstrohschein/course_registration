@@ -26,7 +26,11 @@
                     <tr>
                         <td>{{course.course_id }}</td>
                         <td>{{course.user_progress_id}}</td>
-                        <td>{{course.progress_reached}}</td>
+                        {% if course.progress_reached == True %}
+                            <td><input type="checkbox" disabled checked ></td>
+                        {% else %}
+                            <td><input type="checkbox" disabled></td>
+                        {% endif %}
                         <td>{{course.timestamp}}</td>
                         <td><a href="{% url "student_courses_detail" course.course_id.slug user.id%}">Details</a></td>
                     </tr>
