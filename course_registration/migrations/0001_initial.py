@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('course_name', models.CharField(max_length=200)),
-                ('course_status', models.CharField(choices=[('active', 'active'), ('inactive', 'inactive')], max_length=10)),
+                ('course_active', models.CharField(choices=[('active', 'active'), ('inactive', 'inactive')], max_length=10)),
             ],
         ),
         migrations.CreateModel(

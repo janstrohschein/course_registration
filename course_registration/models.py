@@ -34,7 +34,8 @@ class User_Course_Progress(models.Model):
         rep = self.course_id.course_name + ', '
         rep += self.user_id.username + ', '
         rep += self.user_progress_id.progress_name + ', '
-        rep += str(self.progress_reached) + ' ('
+        rep += str(self.progress_reached)  + ', '
+        rep += str(self.active) + ' ('
         rep += str(self.timestamp) + ')'
         return  rep
 
@@ -42,13 +43,18 @@ class User_Course_Progress(models.Model):
 class Course(models.Model):
     course_name = models.CharField(max_length=200)
     course_teacher = models.ForeignKey(User, on_delete=models.CASCADE)
-    course_status = models.CharField(max_length= 10, choices=[('active', 'active'), ('inactive', 'inactive')], default='active')
+    course_active = models.BooleanField(default=True)
+    course_registration = models.BooleanField(default=True)
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     seats_max = models.IntegerField()
-    seats_cur = models.IntegerField(default=0)
+    #seats_cur = models.IntegerField(default=0)
     required_fields = models.ManyToManyField('Field')
     slug = models.SlugField(max_length=200, blank=True)
 
+    @property
+    def seats_cur(self):
+        seats_cur = User_Course_Registration.objects.filter(course_id=self.id).annotate('user_id')
+        return seats_cur
     def __str__(self):
         return self.course_name
 

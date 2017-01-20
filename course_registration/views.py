@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
-from django.db.models import Max
+from collections import OrderedDict
 import sys
 from django.contrib.auth import get_user, authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -46,7 +46,7 @@ class CourseList(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        new_context = Course.objects.filter(course_status='active')
+        new_context = Course.objects.filter(course_registration=True)
         return new_context
 
 
@@ -63,7 +63,7 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
         count_required_fields = course.required_fields.count()
 
         # +1 because request.POST contains also the csrf token
-        if count_required_fields + 1 == len(request.POST) and \
+        if course.course_registration == True and count_required_fields + 1 == len(request.POST) and \
                 course.seats_cur < course.seats_max:
 
         # for every submitted field the field, field value, user and course will
@@ -163,14 +163,14 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(slug=kwargs['slug'])
         fields = course.required_fields.all()
-        course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct()
+        course_details = User_Course_Registration.objects.filter(course_id =course.id).order_by('field_id')
         course_progress = list(User_Course_Progress.objects.filter(course_id =course.id, active = True))
 
         form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
-        student_list = {}
+        student_list = OrderedDict()
         for entry in course_details:
             if entry.user_id_id not in student_list:
-                student_list[entry.user_id_id] = {}
+                student_list[entry.user_id_id] = OrderedDict()
             student_list[entry.user_id_id][entry.field_id_id] = entry.field_value
 
         for progress in course_progress:
@@ -208,6 +208,9 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                        'user_progress_id': new_progress}
                 User_Course_Progress.objects.get_or_create(**att)
 
+
+            User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
+                                                user_progress_id = new_progress).update(active=True)
             ## deactivate old progress, only for students that got an update
             User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
                                                 user_progress_id = old_progress).update(active=False)
@@ -262,3 +265,20 @@ class StudentCoursesDetail(generic.View):
 
         return render(request, 'course_registration/student_courses_detail.html', \
                       {'progress_list': progress_list})
+
+    def post(self, request, *args, **kwargs):
+        all_ids = request.POST.getlist('all_ids')
+        progress_ids = []
+        if 'progress_id' in request.POST:
+            progress_ids = request.POST.getlist('progress_id')
+
+        negative = []
+        for key in all_ids:
+            if key not in progress_ids:
+                negative.append(key)
+
+        User_Course_Progress.objects.filter(id__in = progress_ids).update(progress_reached = True)
+        User_Course_Progress.objects.filter(id__in = negative).update(progress_reached = False)
+
+        url = '/course_mgmt/student_courses_detail/' + kwargs['slug'] + '/' + kwargs['user']
+        return HttpResponseRedirect(url)

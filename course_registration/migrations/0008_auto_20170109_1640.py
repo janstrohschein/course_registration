@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='course',
-            name='course_status',
+            name='course_active',
             field=models.CharField(choices=[('active', 'active'), ('inactive', 'inactive')], default='active', max_length=10),
         ),
         migrations.AlterField(
