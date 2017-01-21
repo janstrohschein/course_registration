@@ -126,6 +126,31 @@ class TeacherCourses(generic.ListView):
         new_context = Course.objects.filter(course_teacher=teacher)
         return new_context
 
+    def post(self, request):
+        all_ids = request.POST.getlist('all_ids')
+
+        if 'course_registration_id' in request.POST:
+            registration_ids = request.POST.getlist('course_registration_id')
+            negative = []
+            for key in all_ids:
+                if key not in registration_ids:
+                    negative.append(key)
+
+            Course.objects.filter(id__in = registration_ids).update(course_registration = True)
+            Course.objects.filter(id__in = negative).update(course_registration = False)
+
+        if 'course_active_id' in request.POST:
+            active_ids = request.POST.getlist('course_active_id')
+            negative = []
+            for key in all_ids:
+                if key not in active_ids:
+                    negative.append(key)
+
+            Course.objects.filter(id__in = active_ids).update(course_active = True)
+            Course.objects.filter(id__in = negative).update(course_active = False)
+
+            return HttpResponseRedirect('/course_mgmt/teacher_courses')
+
 
 class TeacherCoursesAdd(generic.CreateView):
     model = Course

@@ -7,8 +7,10 @@
     <div class="jumbotron container-fluid">
         <h1>Course overview</h1>
     </div>
-        <div class="col-md-12">
-            <h2>{% trans "Your Courses" %}</h2>
+    <div class="col-md-12">
+        <h2>{% trans "Your Courses" %}</h2>
+        <form method="post">
+            {% csrf_token %}
             {% if course_list %}
                 <table class="table table-striped">
                     <thead>
@@ -25,21 +27,38 @@
 
                     {% for course in course_list %}
                     <tr>
+                        <input type="hidden" name="all_ids" value="{{course.id}}">
                         <td><a href="/course_mgmt/teacher_courses_detail/{{course.slug}}"> {{course.course_name }} </a></td>
                         <td>{{course.course_progress}}</td>
-                        <td>{{course.course_active}}</td>
-                        <td>{{course.course_registration}}</td>
+                        <td>
+                            {% if course.course_active == True %}
+                            <input type="checkbox" name="course_active_id" id="course_active_id" value="{{course.id}}" checked >
+                            {% else %}
+                                <input type="checkbox" name="course_active_id" id="course_active_id"  value="{{course.id}}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if course.course_registration == True %}
+                            <input type="checkbox" name="course_registration_id" id="course_registration_id" value="{{course.id}}" checked >
+                            {% else %}
+                                <input type="checkbox" name="course_registration_id" id="course_registration_id"  value="{{course.id}}">
+                            {% endif %}
+                        </td>
+
                         <td>/course_mgmt/course/{{ course.slug }}</td>
                         <td>{{course.seats_cur}} / {{ course.seats_max }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+                {% include "show_pagination.html"%}
+                <input type="submit" class="btn btn-default" name="update" value="Update">
+
             {% else %}
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
-        </div>
-        {% include "show_pagination.html"%}
-        <a href="{% url "teacher_courses_add" %}"  class="btn btn-default">Add Course</a>
+            <a href="{% url "teacher_courses_add" %}"  class="btn btn-default">Add Course</a>
+        </form>
+    </div>
 </div>
 {% endblock %}
