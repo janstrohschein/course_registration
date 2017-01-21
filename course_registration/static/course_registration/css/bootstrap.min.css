@@ -1456,7 +1456,7 @@ hr {
     font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
-    color: inherit;
+    color: #ea5a00;
 }
 
     .h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
@@ -4754,7 +4754,7 @@ select[multiple].input-group-sm > .form-control, select[multiple].input-group-sm
 }
 
     .navbar-default .navbar-brand {
-        color: #777;
+        color: #b43092;
     }
 
         .navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover {
@@ -5234,7 +5234,7 @@ a.badge:focus, a.badge:hover {
 }
 
     .jumbotron .h1, .jumbotron h1 {
-        color: inherit;
+        color: #b43092;
     }
 
     .jumbotron p {
