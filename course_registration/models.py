@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+import sys
 
 
 class User_Course_Registration(models.Model):
@@ -47,14 +48,15 @@ class Course(models.Model):
     course_registration = models.BooleanField(default=True)
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     seats_max = models.IntegerField()
-    #seats_cur = models.IntegerField(default=0)
     required_fields = models.ManyToManyField('Field')
     slug = models.SlugField(max_length=200, blank=True)
 
     @property
     def seats_cur(self):
-        seats_cur = User_Course_Registration.objects.filter(course_id=self.id).annotate('user_id')
+        seats_cur = User_Course_Registration.objects.filter(course_id=self.id)\
+            .values('user_id').annotate(user_count = models.Count('user_id')).count()
         return seats_cur
+
     def __str__(self):
         return self.course_name
 

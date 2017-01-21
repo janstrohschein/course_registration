@@ -87,17 +87,12 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
                     except:
                         print(sys.exc_info())
 
-            # get_or_create returns the object and information if it was created
-            if new_reg[1] == True:
-                course.seats_cur += 1
-                course.save()
-
             prog_values = {'user_id': user,
                            'course_id': course,
                            'user_progress_id': course.course_progress,
                            'progress_reached': True}
 
-            new_prog = User_Course_Progress.objects.get_or_create(**prog_values)
+            User_Course_Progress.objects.get_or_create(**prog_values)
 
         return HttpResponseRedirect('/course_mgmt/my_courses')
 
