@@ -284,7 +284,7 @@ class StudentCoursesDetail(generic.View):
         progress_list = User_Course_Progress.objects.filter(user_id= user, course_id= course)
 
         return render(request, 'course_registration/student_courses_detail.html', \
-                      {'progress_list': progress_list})
+                      {'progress_list': progress_list, 'user': user, 'course': course})
 
     def post(self, request, *args, **kwargs):
         all_ids = request.POST.getlist('all_ids')

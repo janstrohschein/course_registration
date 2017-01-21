@@ -6,7 +6,7 @@
 {% block content%}
 <div class="container">
     <div class="jumbotron container-fluid">
-        <h1>Course overview</h1>
+        <h1>{{ course }}</h1>
     </div>
         <div class="col-md-12" style="padding-top: 15px">
         <form action="" method="post">
@@ -16,6 +16,7 @@
                 <div class="col-md-4"><input type="submit" class="btn btn-default" name="update" value="Update"></div>
             </div>
             {% if student_list %}
+                <h2>{% trans "Student list" %}</h2>
                 <table class="table table-striped">
                     <thead>
                             <tr>
