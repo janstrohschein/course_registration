@@ -24,7 +24,7 @@
 
                     {% for course in course_list %}
                     <tr>
-                        <td>{{course.course_id }}</td>
+                        <td><a href="{% url "student_courses_detail" course.course_id.slug user.id%}">{{course.course_id }}</a></td>
                         <td>{{course.user_progress_id}}</td>
                         {% if course.progress_reached == True %}
                             <td><input type="checkbox" disabled checked ></td>
@@ -32,7 +32,6 @@
                             <td><input type="checkbox" disabled></td>
                         {% endif %}
                         <td>{{course.timestamp}}</td>
-                        <td><a href="{% url "student_courses_detail" course.course_id.slug user.id%}">Details</a></td>
                     </tr>
                     {% endfor %}
                     </tbody>

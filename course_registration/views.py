@@ -106,7 +106,7 @@ class UserCourses(LoginRequiredMixin, generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         user = get_user(request)
-        courses = User_Course_Progress.objects.filter(user_id=user, active=True)
+        courses = User_Course_Progress.objects.filter(user_id=user, active=True, course_id__course_active=True)
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
 
 
@@ -198,18 +198,14 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                 student_list[progress.user_id_id]['progress'] = progress.user_progress_id.progress_name
                 student_list[progress.user_id_id]['progress_reached'] = progress.progress_reached
 
-
-
         return render(request, 'course_registration/teacher_courses_detail.html', \
-
                       {'form': form,'course': course, 'student_list': student_list, 'field_list': fields})
 
     def post(self, request, *args, **kwargs):
 
         course = Course.objects.get(slug=kwargs['slug'])
-        progress = Progress.objects.all()
 
-        if 'update' in request.POST:
+        if 'update_course_progress' in request.POST:
             ## write new course progress with request.POST['course_progress']
             old_progress = course.course_progress
             new_progress = Progress.objects.get(id = request.POST['course_progress'])
@@ -234,6 +230,24 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             ## deactivate old progress, only for students that got an update
             User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
                                                 user_progress_id = old_progress).update(active=False)
+
+            return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
+
+        elif 'update_student_progress' in request.POST:
+            course_progress = User_Course_Progress.objects.filter(course_id =course.id, active = True)
+            all_ids = request.POST.getlist('all_ids')
+            student_ids = []
+            if 'student_id' in request.POST:
+                student_ids = request.POST.getlist('student_id')
+
+            negative = []
+            for key in all_ids:
+                if key not in student_ids:
+                    negative.append(key)
+
+            course_progress.filter(user_id__in = student_ids).update(progress_reached = True)
+            course_progress.filter(user_id__in = negative).update(progress_reached = False)
+
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
