@@ -224,9 +224,6 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                        'user_progress_id': new_progress}
                 User_Course_Progress.objects.get_or_create(**att)
 
-
-            User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
-                                                user_progress_id = new_progress).update(active=True)
             ## deactivate old progress, only for students that got an update
             User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
                                                 user_progress_id = old_progress).update(active=False)
