@@ -123,7 +123,7 @@ class TeacherCourses(generic.ListView):
 
     def get_queryset(self):
         teacher = get_user(self.request)
-        new_context = Course.objects.filter(course_teacher=teacher)
+        new_context = Course.objects.filter(course_teacher=teacher).order_by('-course_active', 'course_name')
         return new_context
 
     def post(self, request):
