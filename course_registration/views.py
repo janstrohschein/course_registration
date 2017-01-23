@@ -293,12 +293,23 @@ class StudentCoursesDetail(generic.View):
 
     def get(self, request, *args, **kwargs):
         user = User.objects.get(id = kwargs['user'])
-
+        request_user = get_user(request)
         course = Course.objects.get(slug=kwargs['slug'])
         progress_list = User_Course_Progress.objects.filter(user_id= user, course_id= course)
 
+        is_user = False
+        is_teacher = False
+
+        if request_user == user:
+            is_user = True
+
+        if course.course_teacher == request_user:
+            is_teacher = True
+
+
         return render(request, 'course_registration/student_courses_detail.html', \
-                      {'progress_list': progress_list, 'user': user, 'course': course})
+                      {'progress_list': progress_list, 'course_user': user, 'course': course, \
+                       'is_user': is_user, 'is_teacher': is_teacher})
 
     def post(self, request, *args, **kwargs):
         all_ids = request.POST.getlist('all_ids')
