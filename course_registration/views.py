@@ -57,44 +57,51 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
     success_message = 'Registered successfully!'
 
     def post(self, request, **kwargs):
-        # get number of required fields
-        # if submitted number is equal proceed registration
-        course = Course.objects.get(slug=kwargs['slug'])
-        count_required_fields = course.required_fields.count()
 
-        # +1 because request.POST contains also the csrf token
-        if course.course_registration == True and count_required_fields + 1 == len(request.POST) and \
-                course.seats_cur < course.seats_max:
+        if 'back' in request.POST:
+            next = request.POST.get('next', '/')
+            return HttpResponseRedirect(next)
 
-        # for every submitted field the field, field value, user and course will
-        # be inserted into CourseRegistration
-            user = get_user(request)
-            # if user.pk is None:
-            #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
+        if 'register' in request.POST:
 
-            for entry in request.POST:
-                if entry != 'csrfmiddlewaretoken':
-                    try:
-                        field = Field.objects.get(field_name__exact=entry)
-                        if field:
-                            reg_values = {}
-                            reg_values['user_id'] = user
-                            reg_values['course_id'] = course
-                            reg_values['field_id'] = field
-                            reg_values['field_value'] = request.POST[entry]
-                            new_reg = User_Course_Registration.objects.get_or_create(**reg_values)
+            # get number of required fields
+            # if submitted number is equal proceed registration
+            course = Course.objects.get(slug=kwargs['slug'])
+            count_required_fields = course.required_fields.count()
 
-                    except:
-                        print(sys.exc_info())
+            # +1 because request.POST contains also the csrf token
+            if course.course_registration == True and count_required_fields + 1 == len(request.POST) and \
+                    course.seats_cur < course.seats_max:
 
-            prog_values = {'user_id': user,
-                           'course_id': course,
-                           'user_progress_id': course.course_progress,
-                           'progress_reached': True}
+            # for every submitted field the field, field value, user and course will
+            # be inserted into CourseRegistration
+                user = get_user(request)
+                # if user.pk is None:
+                #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
 
-            User_Course_Progress.objects.get_or_create(**prog_values)
+                for entry in request.POST:
+                    if entry != 'csrfmiddlewaretoken':
+                        try:
+                            field = Field.objects.get(field_name__exact=entry)
+                            if field:
+                                reg_values = {}
+                                reg_values['user_id'] = user
+                                reg_values['course_id'] = course
+                                reg_values['field_id'] = field
+                                reg_values['field_value'] = request.POST[entry]
+                                new_reg = User_Course_Registration.objects.get_or_create(**reg_values)
 
-        return HttpResponseRedirect('/course_mgmt/my_courses')
+                        except:
+                            print(sys.exc_info())
+
+                prog_values = {'user_id': user,
+                               'course_id': course,
+                               'user_progress_id': course.course_progress,
+                               'progress_reached': True}
+
+                User_Course_Progress.objects.get_or_create(**prog_values)
+
+            return HttpResponseRedirect('/course_mgmt/my_courses')
 
 
 class UserCourses(LoginRequiredMixin, generic.DetailView):
@@ -164,6 +171,11 @@ class TeacherCoursesAdd(generic.CreateView):
         return super(TeacherCoursesAdd, self).dispatch(*args, **kwargs)
 
     def post(self, request, **kwargs):
+
+        if 'back' in request.POST:
+            next = request.POST.get('next', '/')
+            return HttpResponseRedirect(next)
+
         att = {}
         att['course_name'] = request.POST['course_name']
         att['course_teacher'] = get_user(request)
@@ -204,6 +216,10 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     def post(self, request, *args, **kwargs):
 
         course = Course.objects.get(slug=kwargs['slug'])
+
+        if 'back' in request.POST:
+            next = '/course_mgmt/teacher_courses'
+            return HttpResponseRedirect(next)
 
         if 'update_course_progress' in request.POST:
             ## write new course progress with request.POST['course_progress']
@@ -309,6 +325,10 @@ class StudentCoursesDetail(generic.View):
                        'is_user': is_user, 'is_teacher': is_teacher})
 
     def post(self, request, *args, **kwargs):
+        if 'back' in request.POST:
+            next = request.POST.get('next', '/')
+            return HttpResponseRedirect(next)
+
         all_ids = request.POST.getlist('all_ids')
         progress_ids = []
         if 'progress_id' in request.POST:

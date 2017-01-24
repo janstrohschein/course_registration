@@ -45,7 +45,7 @@
                             {% endif %}
 
                         {% endfor %}
-                        <td><a href="{% url "student_courses_detail" course.slug student%}">Details</a></td>
+                        <td><a href="{% url "student_courses_detail" course.slug student%}?next={{ request.path|urlencode }}">Details</a></td>
                         </tr>
 
                     {% endfor %}
@@ -56,6 +56,9 @@
             {% endif %}
             {% include "show_pagination.html"%}
             {% include "show_message.html"%}
+
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            <input type="submit" class="btn btn-default" name="back" value="Back" />
             <input type="submit" class="btn btn-default" name="update_student_progress" value="Update">
             <input type="submit" class="btn btn-default" name="export" value="Export">
             </form>

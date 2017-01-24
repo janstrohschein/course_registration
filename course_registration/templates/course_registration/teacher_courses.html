@@ -28,7 +28,7 @@
                     {% for course in course_list %}
                     <tr>
                         <input type="hidden" name="all_ids" value="{{course.id}}">
-                        <td><a href="/course_mgmt/teacher_courses_detail/{{course.slug}}"> {{course.course_name }} </a></td>
+                        <td><a href="/course_mgmt/teacher_courses_detail/{{course.slug}}?next={{ request.path|urlencode }}"> {{course.course_name }} </a></td>
                         <td>{{course.course_progress}}</td>
                         <td>
                             {% if course.course_active == True %}
@@ -57,7 +57,7 @@
             {% else %}
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
-            <a href="{% url "teacher_courses_add" %}"  class="btn btn-default">Add Course</a>
+            <a href="{% url "teacher_courses_add" %}?next={{ request.path|urlencode }}"  class="btn btn-default">Add Course</a>
         </form>
     </div>
 </div>
