@@ -18,7 +18,7 @@
                         {% for field in course.required_fields.all %}
                         <tr>
                             <td>{{field.field_name}}</td>
-                            <td><input id="{{field.field_name}}" name="{{field.field_name}}" type="text"></td>
+                            <td><input id="{{field.field_name}}" name="registration_values.{{field.field_name}}" type="text"></td>
                         </tr>
                         {% endfor %}
                         </tbody>

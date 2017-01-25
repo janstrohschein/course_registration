@@ -70,7 +70,7 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
             count_required_fields = course.required_fields.count()
 
             # +1 because request.POST contains also the csrf token
-            if course.course_registration == True and count_required_fields + 1 == len(request.POST) and \
+            if course.course_registration == True and count_required_fields + 3 == len(request.POST) and \
                     course.seats_cur < course.seats_max:
 
             # for every submitted field the field, field value, user and course will
@@ -80,9 +80,9 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
                 #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
 
                 for entry in request.POST:
-                    if entry != 'csrfmiddlewaretoken':
+                    if entry.startswith('registration_values'):
                         try:
-                            field = Field.objects.get(field_name__exact=entry)
+                            field = Field.objects.get(field_name__exact=entry[20:])
                             if field:
                                 reg_values = {}
                                 reg_values['user_id'] = user
