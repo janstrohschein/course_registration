@@ -23,8 +23,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <input type="hidden" name="next" value="{{ request.GET.next }}">
-                    <input type="submit" class="btn btn-default" name="back" value="Back">
+                    <a href="{{ request.GET.next }}" class="btn btn-default">Back</a>
                     <input type="submit" class="btn btn-default" name="register" value="Register">
                 </form>
             {% else %}

@@ -57,8 +57,7 @@
             {% include "show_pagination.html"%}
             {% include "show_message.html"%}
 
-            <input type="hidden" name="next" value="{{ request.GET.next }}">
-            <input type="submit" class="btn btn-default" name="back" value="Back" />
+            <a href="/course_mgmt/teacher_courses" class="btn btn-default">Back</a>
             <input type="submit" class="btn btn-default" name="update_student_progress" value="Update">
             <input type="submit" class="btn btn-default" name="export" value="Export">
             </form>

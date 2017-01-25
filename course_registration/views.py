@@ -58,10 +58,6 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
 
     def post(self, request, **kwargs):
 
-        if 'back' in request.POST:
-            next = request.POST.get('next', '/')
-            return HttpResponseRedirect(next)
-
         if 'register' in request.POST:
 
             # get number of required fields
@@ -70,7 +66,7 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
             count_required_fields = course.required_fields.count()
 
             # +1 because request.POST contains also the csrf token
-            if course.course_registration == True and count_required_fields + 3 == len(request.POST) and \
+            if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
                     course.seats_cur < course.seats_max:
 
             # for every submitted field the field, field value, user and course will
@@ -172,10 +168,6 @@ class TeacherCoursesAdd(generic.CreateView):
 
     def post(self, request, **kwargs):
 
-        if 'back' in request.POST:
-            next = request.POST.get('next', '/')
-            return HttpResponseRedirect(next)
-
         att = {}
         att['course_name'] = request.POST['course_name']
         att['course_teacher'] = get_user(request)
@@ -216,10 +208,6 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     def post(self, request, *args, **kwargs):
 
         course = Course.objects.get(slug=kwargs['slug'])
-
-        if 'back' in request.POST:
-            next = '/course_mgmt/teacher_courses'
-            return HttpResponseRedirect(next)
 
         if 'update_course_progress' in request.POST:
             ## write new course progress with request.POST['course_progress']
@@ -325,9 +313,6 @@ class StudentCoursesDetail(generic.View):
                        'is_user': is_user, 'is_teacher': is_teacher})
 
     def post(self, request, *args, **kwargs):
-        if 'back' in request.POST:
-            next = request.POST.get('next', '/')
-            return HttpResponseRedirect(next)
 
         all_ids = request.POST.getlist('all_ids')
         progress_ids = []
