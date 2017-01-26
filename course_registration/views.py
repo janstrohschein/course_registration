@@ -16,13 +16,27 @@ from course_registration.ExcelWriter import ExcelWriter
 
 
 class LoginRequiredMixin(object):
+    """
+
+    """
     @classmethod
     def as_view(cls, **initkwargs):
+        """
+
+        :param initkwargs:
+        :return:
+        """
         view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
         return login_required(view)
 
 
 class UserAdd(generic.CreateView):
+    """
+    Adds a new user using djangos auth functionality
+
+    form_valid is overridden to automatically login the user after registration
+    """
+
     form_class = MyUserCreationForm
     template_name = 'course_registration/register.html'
     success_url = 'course_mgmt/courses'
@@ -46,6 +60,11 @@ class CourseList(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Returns all courses with active registration
+
+        :return: course queryset
+        """
         new_context = Course.objects.filter(course_registration=True)
         return new_context
 
@@ -57,6 +76,12 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
     success_message = 'Registered successfully!'
 
     def post(self, request, **kwargs):
+        """
+
+        :param request:
+        :param kwargs:
+        :return:
+        """
 
         if 'register' in request.POST:
 
@@ -65,7 +90,7 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
             course = Course.objects.get(slug=kwargs['slug'])
             count_required_fields = course.required_fields.count()
 
-            # +1 because request.POST contains also the csrf token
+            # +2 because request.POST contains also the csrf token
             if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
                     course.seats_cur < course.seats_max:
 
@@ -108,6 +133,13 @@ class UserCourses(LoginRequiredMixin, generic.DetailView):
     paginate_by = 10
 
     def get(self, request, *args, **kwargs):
+        """
+
+        :param request: contains user information
+        :param args: not used
+        :param kwargs: not used
+        :return: user object and a list of all active course progress' for all active courses of this user
+        """
         user = get_user(request)
         courses = User_Course_Progress.objects.filter(user_id=user, active=True, course_id__course_active=True)
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
@@ -125,11 +157,21 @@ class TeacherCourses(generic.ListView):
         return super(TeacherCourses, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
+
+        """
+
+        :return:
+        """
         teacher = get_user(self.request)
         new_context = Course.objects.filter(course_teacher=teacher).order_by('-course_active', 'course_name')
         return new_context
 
     def post(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         all_ids = request.POST.getlist('all_ids')
 
         if 'course_registration_id' in request.POST:
@@ -167,13 +209,28 @@ class TeacherCoursesAdd(generic.CreateView):
         return super(TeacherCoursesAdd, self).dispatch(*args, **kwargs)
 
     def post(self, request, **kwargs):
+        """
 
+        :param request:
+        :param kwargs:
+        :return:
+        """
+
+        """
+            creates new course with attributes att, default values are used for:
+            course_active = models.BooleanField(default=True)
+            course_registration = models.BooleanField(default=True)
+            slug = models.SlugField(max_length=200, blank=True)
+            slug field is generated in save method of model "Course"
+        """
         att = {}
         att['course_name'] = request.POST['course_name']
         att['course_teacher'] = get_user(request)
         att['course_progress'] = Progress.objects.get(id = request.POST['course_progress'])
         att['seats_max'] = request.POST['seats_max']
         course = Course.objects.create(**att)
+
+        # adds many-to-many entries for all required fields
         course.required_fields.add(*request.POST.getlist('required_fields'))
 
         return HttpResponseRedirect('/course_mgmt/teacher_courses')
@@ -185,6 +242,13 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     form_class = CourseProgressUpdateForm
 
     def get(self, request, *args, **kwargs):
+        """
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         course = Course.objects.get(slug=kwargs['slug'])
         fields = course.required_fields.all()
         course_details = User_Course_Registration.objects.filter(course_id =course.id).order_by('field_id')
@@ -292,7 +356,13 @@ class StudentCoursesDetail(generic.View):
     template_name = 'course_registration/student_courses_detail.html'
     context_object_name = 'progress_list'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, **kwargs):
+        """
+
+        :param request:
+        :param kwargs:
+        :return:
+        """
         user = User.objects.get(id = kwargs['user'])
         request_user = get_user(request)
         course = Course.objects.get(slug=kwargs['slug'])
