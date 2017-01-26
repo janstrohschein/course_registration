@@ -252,6 +252,8 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         course = Course.objects.get(slug=kwargs['slug'])
         fields = course.required_fields.all()
         course_details = User_Course_Registration.objects.filter(course_id =course.id).order_by('field_id')
+
+        ### instead find unfinished course progress with lowest id for every user
         course_progress = list(User_Course_Progress.objects.filter(course_id =course.id, active = True))
 
         form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
@@ -280,6 +282,9 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             course.course_progress = new_progress
             course.save()
 
+            ### instead create new progress for all students
+
+
             ## write new student progress entry for all students that reached the last "milestone"
             student_list = User_Course_Progress.objects.filter(course_id = course.id, \
                                         active = True, progress_reached = True)
@@ -291,6 +296,8 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                        'course_id': student.course_id,
                        'user_progress_id': new_progress}
                 User_Course_Progress.objects.get_or_create(**att)
+
+
 
             ## deactivate old progress, only for students that got an update
             User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
