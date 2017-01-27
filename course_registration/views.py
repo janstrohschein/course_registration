@@ -125,7 +125,7 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
             return HttpResponseRedirect('/course_mgmt/my_courses')
 
 
-class UserCourses(LoginRequiredMixin, generic.DetailView):
+class StudentCourses(LoginRequiredMixin, generic.DetailView):
     model = User_Course_Progress
     template_name = 'course_registration/my_courses.html'
     context_object_name = 'course_list'
@@ -141,7 +141,28 @@ class UserCourses(LoginRequiredMixin, generic.DetailView):
         :return: user object and a list of all active course progress' for all active courses of this user
         """
         user = get_user(request)
-        courses = User_Course_Progress.objects.filter(user_id=user, active=True, course_id__course_active=True)
+        #courses = list(User_Course_Progress.objects.filter(user_id=user, course_id__course_active=True))
+        courses = list(User_Course_Progress.objects.lowest_unfinished().filter(user_id=user))
+        # course_id = 0
+        # reduced_courses = []
+        # course_appended = False
+        # for index, course in enumerate(reversed(courses)):
+        #
+        #     if course_id != course.course_id_id:
+        #         course_appended = False
+        #         course_id = course.course_id_id
+        #
+        #     if course.progress_reached == True and course_appended == False:
+        #         course_appended = True
+        #         reduced_courses.append(course)
+        #
+        #     elif course_appended == False and (index + 1 > len(courses) or \
+        #                             courses[index-1].course_id_id != course_id or \
+        #                             (courses[index-1].course_id_id == course_id and courses[index-1].progress_reached == True)):
+        #          course_appended = True
+        #          reduced_courses.append(course)
+
+
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
 
 
@@ -254,9 +275,10 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         course_details = User_Course_Registration.objects.filter(course_id =course.id).order_by('field_id')
 
         ### instead find unfinished course progress with lowest id for every user
-        course_progress = list(User_Course_Progress.objects.filter(course_id =course.id, active = True))
+        course_progress = list(User_Course_Progress.objects.lowest_unfinished().filter(course_id =course.id))
 
         form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
+
         student_list = OrderedDict()
         for entry in course_details:
             if entry.user_id_id not in student_list:
@@ -285,28 +307,22 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             ### instead create new progress for all students
 
 
-            ## write new student progress entry for all students that reached the last "milestone"
-            student_list = User_Course_Progress.objects.filter(course_id = course.id, \
-                                        active = True, progress_reached = True)
-            student_ids = []
+            ## write new student progress entry for all students
+            student_list = User_Course_Progress.objects.filter(course_id = course.id).order_by('user_id')
+            last_student = None
             for student in student_list:
-                student_ids.append(student.user_id)
+                if student.user_id != last_student:
+                    last_student = student.user_id
+                    att = {'user_id': student.user_id,
+                           'course_id': course,
+                           'user_progress_id': new_progress}
+                    User_Course_Progress.objects.get_or_create(**att)
 
-                att = {'user_id': student.user_id,
-                       'course_id': student.course_id,
-                       'user_progress_id': new_progress}
-                User_Course_Progress.objects.get_or_create(**att)
-
-
-
-            ## deactivate old progress, only for students that got an update
-            User_Course_Progress.objects.filter(user_id__in = student_ids, course_id = course.id, \
-                                                user_progress_id = old_progress).update(active=False)
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
         elif 'update_student_progress' in request.POST:
-            course_progress = User_Course_Progress.objects.filter(course_id =course.id, active = True)
+            course_progress = User_Course_Progress.objects.lowest_unfinished().filter(course_id =course.id)
             all_ids = request.POST.getlist('all_ids')
             student_ids = []
             if 'student_id' in request.POST:
@@ -404,5 +420,5 @@ class StudentCoursesDetail(generic.View):
         User_Course_Progress.objects.filter(id__in = progress_ids).update(progress_reached = True)
         User_Course_Progress.objects.filter(id__in = negative).update(progress_reached = False)
 
-        url = '/course_mgmt/student_courses_detail/' + kwargs['slug'] + '/' + kwargs['user']
-        return HttpResponseRedirect(url)
+
+        return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])

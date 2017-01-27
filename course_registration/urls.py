@@ -8,7 +8,7 @@ urlpatterns = [
 
     url(r'^course/(?P<slug>[-\w]+)/$', views.CourseDetail.as_view(), name='course_detail'),
 
-    url(r'^my_courses$', views.UserCourses.as_view(), name='my_courses'),
+    url(r'^my_courses$', views.StudentCourses.as_view(), name='my_courses'),
 
     url(r'^teacher_courses$', views.TeacherCourses.as_view(), name='teacher_courses'),
     url(r'^teacher_courses/add$', views.TeacherCoursesAdd.as_view(), name='teacher_courses_add'),
