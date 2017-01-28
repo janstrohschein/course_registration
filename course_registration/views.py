@@ -14,11 +14,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from course_registration.ExcelWriter import ExcelWriter
 
 
-
 class LoginRequiredMixin(object):
     """
 
     """
+
     @classmethod
     def as_view(cls, **initkwargs):
         """
@@ -46,7 +46,7 @@ class UserAdd(generic.CreateView):
         valid = super(UserAdd, self).form_valid(form)
         form.save()
         username, password = form.cleaned_data.get('username'), form.cleaned_data.get('password')
-        user = User.objects.get(username = username)
+        user = User.objects.get(username=username)
         authenticate(username=user, password=password)
         login(self.request, user)
         return valid
@@ -92,10 +92,10 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
 
             # +2 because request.POST contains also the csrf token
             if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
-                    course.seats_cur < course.seats_max:
+                            course.seats_cur < course.seats_max:
 
-            # for every submitted field the field, field value, user and course will
-            # be inserted into CourseRegistration
+                # for every submitted field the field, field value, user and course will
+                # be inserted into CourseRegistration
                 user = get_user(request)
                 # if user.pk is None:
                 #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
@@ -105,12 +105,12 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
                         try:
                             field = Field.objects.get(field_name__exact=entry[20:])
                             if field:
-                                reg_values = {}
-                                reg_values['user_id'] = user
-                                reg_values['course_id'] = course
-                                reg_values['field_id'] = field
-                                reg_values['field_value'] = request.POST[entry]
-                                new_reg = User_Course_Registration.objects.get_or_create(**reg_values)
+                                reg_values = {'user_id': user,
+                                              'course_id': course,
+                                              'field_id': field,
+                                              'field_value': request.POST[entry]}
+
+                                User_Course_Registration.objects.get_or_create(**reg_values)
 
                         except:
                             print(sys.exc_info())
@@ -141,7 +141,7 @@ class StudentCourses(LoginRequiredMixin, generic.DetailView):
         :return: user object and a list of all active course progress' for all active courses of this user
         """
         user = get_user(request)
-        #courses = list(User_Course_Progress.objects.filter(user_id=user, course_id__course_active=True))
+        # courses = list(User_Course_Progress.objects.filter(user_id=user, course_id__course_active=True))
         courses = list(User_Course_Progress.objects.lowest_unfinished().filter(user_id=user))
         # course_id = 0
         # reduced_courses = []
@@ -202,8 +202,8 @@ class TeacherCourses(generic.ListView):
                 if key not in registration_ids:
                     negative.append(key)
 
-            Course.objects.filter(id__in = registration_ids).update(course_registration = True)
-            Course.objects.filter(id__in = negative).update(course_registration = False)
+            Course.objects.filter(id__in=registration_ids).update(course_registration=True)
+            Course.objects.filter(id__in=negative).update(course_registration=False)
 
         if 'course_active_id' in request.POST:
             active_ids = request.POST.getlist('course_active_id')
@@ -212,8 +212,8 @@ class TeacherCourses(generic.ListView):
                 if key not in active_ids:
                     negative.append(key)
 
-            Course.objects.filter(id__in = active_ids).update(course_active = True)
-            Course.objects.filter(id__in = negative).update(course_active = False)
+            Course.objects.filter(id__in=active_ids).update(course_active=True)
+            Course.objects.filter(id__in=negative).update(course_active=False)
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses')
 
@@ -223,7 +223,6 @@ class TeacherCoursesAdd(generic.CreateView):
     template_name = 'course_registration/course_add.html'
     form_class = TeacherCoursesAddForm
     success_url = '/course_mgmt/teacher_courses'
-
 
     @method_decorator(user_passes_test(lambda u: u.groups.filter(name='teacher').count() == 1))
     def dispatch(self, *args, **kwargs):
@@ -244,11 +243,11 @@ class TeacherCoursesAdd(generic.CreateView):
             slug = models.SlugField(max_length=200, blank=True)
             slug field is generated in save method of model "Course"
         """
-        att = {}
-        att['course_name'] = request.POST['course_name']
-        att['course_teacher'] = get_user(request)
-        att['course_progress'] = Progress.objects.get(id = request.POST['course_progress'])
-        att['seats_max'] = request.POST['seats_max']
+        att = {'course_name': request.POST['course_name'],
+               'course_teacher': get_user(request),
+               'course_progress': Progress.objects.get(id=request.POST['course_progress']),
+               'seats_max': request.POST['seats_max']}
+
         course = Course.objects.create(**att)
 
         # adds many-to-many entries for all required fields
@@ -272,10 +271,10 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         """
         course = Course.objects.get(slug=kwargs['slug'])
         fields = course.required_fields.all()
-        course_details = User_Course_Registration.objects.filter(course_id =course.id).order_by('field_id')
+        course_details = User_Course_Registration.objects.filter(course_id=course.id).order_by('field_id')
 
-        ### instead find unfinished course progress with lowest id for every user
-        course_progress = list(User_Course_Progress.objects.lowest_unfinished().filter(course_id =course.id))
+        # finds unfinished course progress with lowest id for every user
+        course_progress = list(User_Course_Progress.objects.lowest_unfinished().filter(course_id=course.id))
 
         form = CourseProgressUpdateForm(data={'course_progress': course.course_progress_id})
 
@@ -290,25 +289,31 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                 student_list[progress.user_id_id]['progress'] = progress.user_progress_id.progress_name
                 student_list[progress.user_id_id]['progress_reached'] = progress.progress_reached
 
-        return render(request, 'course_registration/teacher_courses_detail.html', \
-                      {'form': form,'course': course, 'student_list': student_list, 'field_list': fields})
+        student_complete_list = OrderedDict()
+        student_incomplete_list = OrderedDict()
+
+        for student in student_list.items():
+            if course.course_progress.progress_name == student[1]['progress']:
+                student_complete_list[student[0]] = student[1]
+            else:
+                student_incomplete_list[student[0]] = student[1]
+
+        return render(request, 'course_registration/teacher_courses_detail.html',
+                      {'form': form, 'course': course, 'student_complete_list': student_complete_list,
+                       'student_incomplete_list': student_incomplete_list, 'field_list': fields})
 
     def post(self, request, *args, **kwargs):
 
         course = Course.objects.get(slug=kwargs['slug'])
 
         if 'update_course_progress' in request.POST:
-            ## write new course progress with request.POST['course_progress']
-            old_progress = course.course_progress
-            new_progress = Progress.objects.get(id = request.POST['course_progress'])
+            # write new course progress
+            new_progress = Progress.objects.get(id=request.POST['course_progress'])
             course.course_progress = new_progress
             course.save()
 
-            ### instead create new progress for all students
-
-
-            ## write new student progress entry for all students
-            student_list = User_Course_Progress.objects.filter(course_id = course.id).order_by('user_id')
+            # write new student progress entry for all students
+            student_list = User_Course_Progress.objects.filter(course_id=course.id).order_by('user_id')
             last_student = None
             for student in student_list:
                 if student.user_id != last_student:
@@ -318,11 +323,10 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                            'user_progress_id': new_progress}
                     User_Course_Progress.objects.get_or_create(**att)
 
-
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
         elif 'update_student_progress' in request.POST:
-            course_progress = User_Course_Progress.objects.lowest_unfinished().filter(course_id =course.id)
+            course_progress = User_Course_Progress.objects.lowest_unfinished().filter(course_id=course.id)
             all_ids = request.POST.getlist('all_ids')
             student_ids = []
             if 'student_id' in request.POST:
@@ -333,16 +337,14 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
                 if key not in student_ids:
                     negative.append(key)
 
-            course_progress.filter(user_id__in = student_ids).update(progress_reached = True)
-            course_progress.filter(user_id__in = negative).update(progress_reached = False)
-
+            course_progress.filter(user_id__in=student_ids).update(progress_reached=True)
+            course_progress.filter(user_id__in=negative).update(progress_reached=False)
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
-
         elif 'export' in request.POST:
             fields = course.required_fields.all()
-            course_details = User_Course_Registration.objects.filter(course_id =course.id).distinct().values()
+            course_details = User_Course_Registration.objects.filter(course_id=course.id).distinct().values()
             student_list = {}
             field_list = []
 
@@ -386,10 +388,10 @@ class StudentCoursesDetail(generic.View):
         :param kwargs:
         :return:
         """
-        user = User.objects.get(id = kwargs['user'])
+        user = User.objects.get(id=kwargs['user'])
         request_user = get_user(request)
         course = Course.objects.get(slug=kwargs['slug'])
-        progress_list = User_Course_Progress.objects.filter(user_id= user, course_id= course)
+        progress_list = User_Course_Progress.objects.filter(user_id=user, course_id=course)
 
         is_user = False
         is_teacher = False
@@ -400,9 +402,8 @@ class StudentCoursesDetail(generic.View):
         if course.course_teacher == request_user:
             is_teacher = True
 
-
-        return render(request, 'course_registration/student_courses_detail.html', \
-                      {'progress_list': progress_list, 'course_user': user, 'course': course, \
+        return render(request, 'course_registration/student_courses_detail.html',
+                      {'progress_list': progress_list, 'course_user': user, 'course': course,
                        'is_user': is_user, 'is_teacher': is_teacher})
 
     def post(self, request, *args, **kwargs):
@@ -417,8 +418,7 @@ class StudentCoursesDetail(generic.View):
             if key not in progress_ids:
                 negative.append(key)
 
-        User_Course_Progress.objects.filter(id__in = progress_ids).update(progress_reached = True)
-        User_Course_Progress.objects.filter(id__in = negative).update(progress_reached = False)
-
+        User_Course_Progress.objects.filter(id__in=progress_ids).update(progress_reached=True)
+        User_Course_Progress.objects.filter(id__in=negative).update(progress_reached=False)
 
         return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
