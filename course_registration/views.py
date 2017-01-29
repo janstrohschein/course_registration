@@ -90,15 +90,13 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
             course = Course.objects.get(slug=kwargs['slug'])
             count_required_fields = course.required_fields.count()
 
-            # +2 because request.POST contains also the csrf token
+            # +2 because request.POST contains also the csrf and next token
             if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
                             course.seats_cur < course.seats_max:
 
                 # for every submitted field the field, field value, user and course will
                 # be inserted into CourseRegistration
                 user = get_user(request)
-                # if user.pk is None:
-                #     user, status = User.objects.get_or_create(username='Anonym', email=request.POST['Email'])
 
                 for entry in request.POST:
                     if entry.startswith('registration_values'):
@@ -115,12 +113,23 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
                         except:
                             print(sys.exc_info())
 
-                prog_values = {'user_id': user,
-                               'course_id': course,
-                               'user_progress_id': course.course_progress,
-                               'progress_reached': True}
+                course_progress = User_Course_Progress.objects.filter(course_id=course).values_list('user_progress_id')
 
-                User_Course_Progress.objects.get_or_create(**prog_values)
+                if course_progress.count() == 0:
+                    prog_values = {'user_id': user,
+                                   'course_id': course,
+                                   'user_progress_id': course.course_progress,
+                                   'progress_reached': True}
+
+                    User_Course_Progress.objects.get_or_create(**prog_values)
+                else:
+                    for progress in course_progress:
+                        prog_values = {'user_id': user,
+                                       'course_id': course,
+                                       'user_progress_id_id': progress[0],
+                                       'progress_reached': True}
+
+                        User_Course_Progress.objects.get_or_create(**prog_values)
 
             return HttpResponseRedirect('/course_mgmt/my_courses')
 
