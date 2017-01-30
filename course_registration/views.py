@@ -16,7 +16,7 @@ from course_registration.ExcelWriter import ExcelWriter
 
 class LoginRequiredMixin(object):
     """
-
+    This Mixin can be used to display views only to logged in users
     """
 
     @classmethod
@@ -53,6 +53,11 @@ class UserAdd(generic.CreateView):
 
 
 class CourseList(generic.ListView):
+    """
+    Overview of all courses where students can still register
+
+    """
+
     model = Course
     template_name = 'course_registration/course_list.html'
     context_object_name = 'course_list'
@@ -70,6 +75,9 @@ class CourseList(generic.ListView):
 
 
 class CourseDetail(SuccessMessageMixin, generic.DetailView):
+    """
+    CourseDetail is used to register users for a course
+    """
     model = Course
     template_name = 'course_registration/course_detail.html'
     fields = '__all__'
@@ -83,58 +91,61 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
         :return:
         """
 
-        if 'register' in request.POST:
+        # get number of required fields
+        # if submitted number is equal proceed registration
+        course = Course.objects.get(slug=kwargs['slug'])
+        count_required_fields = course.required_fields.count()
 
-            # get number of required fields
-            # if submitted number is equal proceed registration
-            course = Course.objects.get(slug=kwargs['slug'])
-            count_required_fields = course.required_fields.count()
+        # +2 because request.POST contains also the csrf and next token
+        if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
+                        course.seats_cur < course.seats_max:
 
-            # +2 because request.POST contains also the csrf and next token
-            if course.course_registration == True and count_required_fields + 2 == len(request.POST) and \
-                            course.seats_cur < course.seats_max:
+            # for every submitted field the field, field value, user and course will
+            # be inserted into CourseRegistration
+            user = get_user(request)
 
-                # for every submitted field the field, field value, user and course will
-                # be inserted into CourseRegistration
-                user = get_user(request)
+            for entry in request.POST:
+                if entry.startswith('registration_values'):
+                    try:
+                        field = Field.objects.get(field_name__exact=entry[20:])
+                        if field:
+                            reg_values = {'user_id': user,
+                                          'course_id': course,
+                                          'field_id': field,
+                                          'field_value': request.POST[entry]}
 
-                for entry in request.POST:
-                    if entry.startswith('registration_values'):
-                        try:
-                            field = Field.objects.get(field_name__exact=entry[20:])
-                            if field:
-                                reg_values = {'user_id': user,
-                                              'course_id': course,
-                                              'field_id': field,
-                                              'field_value': request.POST[entry]}
+                            User_Course_Registration.objects.get_or_create(**reg_values)
 
-                                User_Course_Registration.objects.get_or_create(**reg_values)
+                    except:
+                        print(sys.exc_info())
 
-                        except:
-                            print(sys.exc_info())
+            course_progress = User_Course_Progress.objects.filter(course_id=course).values_list('user_progress_id')
 
-                course_progress = User_Course_Progress.objects.filter(course_id=course).values_list('user_progress_id')
+            if course_progress.count() == 0:
+                prog_values = {'user_id': user,
+                               'course_id': course,
+                               'user_progress_id': course.course_progress,
+                               'progress_reached': True}
 
-                if course_progress.count() == 0:
+                User_Course_Progress.objects.get_or_create(**prog_values)
+            else:
+                for progress in course_progress:
                     prog_values = {'user_id': user,
                                    'course_id': course,
-                                   'user_progress_id': course.course_progress,
+                                   'user_progress_id_id': progress[0],
                                    'progress_reached': True}
 
                     User_Course_Progress.objects.get_or_create(**prog_values)
-                else:
-                    for progress in course_progress:
-                        prog_values = {'user_id': user,
-                                       'course_id': course,
-                                       'user_progress_id_id': progress[0],
-                                       'progress_reached': True}
 
-                        User_Course_Progress.objects.get_or_create(**prog_values)
-
-            return HttpResponseRedirect('/course_mgmt/my_courses')
+        return HttpResponseRedirect('/course_mgmt/my_courses')
 
 
 class StudentCourses(LoginRequiredMixin, generic.DetailView):
+    """
+    Overview of registered courses for a given user.
+
+    Displays courses that are still marked as "active".
+    """
     model = User_Course_Progress
     template_name = 'course_registration/my_courses.html'
     context_object_name = 'course_list'
@@ -150,32 +161,18 @@ class StudentCourses(LoginRequiredMixin, generic.DetailView):
         :return: user object and a list of all active course progress' for all active courses of this user
         """
         user = get_user(request)
-        # courses = list(User_Course_Progress.objects.filter(user_id=user, course_id__course_active=True))
         courses = list(User_Course_Progress.objects.lowest_unfinished().filter(user_id=user))
-        # course_id = 0
-        # reduced_courses = []
-        # course_appended = False
-        # for index, course in enumerate(reversed(courses)):
-        #
-        #     if course_id != course.course_id_id:
-        #         course_appended = False
-        #         course_id = course.course_id_id
-        #
-        #     if course.progress_reached == True and course_appended == False:
-        #         course_appended = True
-        #         reduced_courses.append(course)
-        #
-        #     elif course_appended == False and (index + 1 > len(courses) or \
-        #                             courses[index-1].course_id_id != course_id or \
-        #                             (courses[index-1].course_id_id == course_id and courses[index-1].progress_reached == True)):
-        #          course_appended = True
-        #          reduced_courses.append(course)
-
 
         return render(request, 'course_registration/my_courses.html', {'user': user, 'course_list': courses})
 
 
 class TeacherCourses(generic.ListView):
+    """
+    Course list for all courses of a teacher.
+
+    Courses can be activated/deactivated and registration can be opened/closed. Also shows the current/max seats for
+    this course and a unique URL that can be given to students.
+    """
     model = Course
     template_name = 'course_registration/teacher_courses.html'
     context_object_name = 'course_list'
@@ -240,18 +237,17 @@ class TeacherCoursesAdd(generic.CreateView):
     def post(self, request, **kwargs):
         """
 
+        creates new course with attributes att, default values are used for:
+        course_active = models.BooleanField(default=True)
+        course_registration = models.BooleanField(default=True)
+        slug = models.SlugField(max_length=200, blank=True)
+        slug field is generated in save method of model "Course"
+
         :param request:
         :param kwargs:
         :return:
         """
 
-        """
-            creates new course with attributes att, default values are used for:
-            course_active = models.BooleanField(default=True)
-            course_registration = models.BooleanField(default=True)
-            slug = models.SlugField(max_length=200, blank=True)
-            slug field is generated in save method of model "Course"
-        """
         att = {'course_name': request.POST['course_name'],
                'course_teacher': get_user(request),
                'course_progress': Progress.objects.get(id=request.POST['course_progress']),
