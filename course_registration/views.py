@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect, HttpResponse
-from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress
+from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress,\
+    Course_Iteration
 from django.contrib.auth.models import User
 from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm, CourseProgressUpdateForm
 from django.contrib.messages.views import SuccessMessageMixin
@@ -83,7 +84,7 @@ class CourseList(generic.ListView):
 
     """
 
-    model = Course
+    model = Course_Iteration
     template_name = 'course_registration/course_list.html'
     context_object_name = 'course_list'
     success_url = '/course_mgmt/courses'
@@ -95,7 +96,7 @@ class CourseList(generic.ListView):
 
         :return: course queryset
         """
-        new_context = Course.objects.filter(course_registration=True)
+        new_context = Course_Iteration.objects.filter(course_registration=True)
         return new_context
 
 

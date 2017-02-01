@@ -21,7 +21,7 @@ class TeacherCoursesAddForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ('course_name', 'course_progress', 'seats_max', 'required_fields')
+        fields = ('course_name', 'required_fields')
         widgets = {"required_fields": CheckboxSelectMultiple(), }
 
 

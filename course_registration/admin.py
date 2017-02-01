@@ -7,6 +7,7 @@ admin.site.register(User_Course_Registration)
 admin.site.register(User_Course_Progress)
 admin.site.register(Field)
 admin.site.register(Progress)
+admin.site.register(Course_Iteration)
 
 class CourseAdmin(admin.ModelAdmin):
     def save_related(self, request, form, *args, **kwargs):
