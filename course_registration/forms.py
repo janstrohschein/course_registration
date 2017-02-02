@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from course_registration.models import Course, Progress
+from course_registration.models import Course, Progress, Course_Iteration
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field
 from django.forms.widgets import CheckboxSelectMultiple, ChoiceInput
@@ -30,6 +30,6 @@ class CourseProgressUpdateForm(forms.ModelForm):
     course_progress = forms.ModelChoiceField(queryset=Progress.objects.all(), label='')
 
     class Meta:
-        model = Course
+        model = Course_Iteration
         fields = ('course_progress',)
 

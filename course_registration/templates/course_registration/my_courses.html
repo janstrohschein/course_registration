@@ -6,7 +6,7 @@
 <div class="container">
     <div class="jumbotron container-fluid">
         <h1>My Courses</h1>
-        <p>{% trans "Overview of your currently registered courses." %} </p>
+        <p>{% trans "Overview of your registered courses." %} </p>
     </div>
         <div class="col-md-12">
           <h2>{% trans "Registered Courses" %}</h2>
@@ -24,7 +24,7 @@
 
                     {% for course in course_list %}
                     <tr>
-                        <td><a href="{% url "student_courses_detail" course.iteration_id.course_id.slug user.id%}?next={{ request.path|urlencode }}">{{course.iteration_id.course_id }}</a></td>
+                        <td><a href="{% url "student_courses_detail" course.iteration_id.slug user.id%}?next={{ request.path|urlencode }}">{{course.iteration_id.course_id }} ({{ course.iteration_id.iteration_name }})</a></td>
                         <td>{{course.user_progress_id}}</td>
                         {% if course.progress_reached == True %}
                             <td><input type="checkbox" disabled checked ></td>
@@ -38,6 +38,34 @@
                 </table>
             {% else %}
                 <p> {% trans "No entries available" %}</p>
+            {% endif %}
+            {% if inactive_course_list %}
+            <h2>{% trans "Earlier Courses" %}</h2>
+                <table class="table table-striped">
+                    <thead>
+                            <tr>
+                            <th>{% trans "Name" %}</th>
+                            <th>{% trans "Progress" %}</th>
+                            <th>{% trans "Progress reached" %}</th>
+                            <th>{% trans "Timestamp" %}</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for course in inactive_course_list %}
+                    <tr>
+                        <td><a href="{% url "student_courses_detail" course.iteration_id.slug user.id%}?next={{ request.path|urlencode }}">{{course.iteration_id.course_id }} ({{ course.iteration_id.iteration_name }})</a></td>
+                        <td>{{course.user_progress_id}}</td>
+                        {% if course.progress_reached == True %}
+                            <td><input type="checkbox" disabled checked ></td>
+                        {% else %}
+                            <td><input type="checkbox" disabled></td>
+                        {% endif %}
+                        <td>{{course.timestamp}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             {% endif %}
         </div>
         {% include "show_pagination.html"%}

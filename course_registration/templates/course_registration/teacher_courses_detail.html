@@ -6,7 +6,7 @@
 {% block content%}
 <div class="container">
     <div class="jumbotron container-fluid">
-        <h1>{{ course }}</h1>
+        <h1>{{ course.course_id.course_name }} ({{ course.iteration_name }})</h1>
     </div>
         <div class="col-md-12" style="padding-top: 15px">
         <form action="" method="post">

@@ -7,12 +7,14 @@ import sys
 class User_Course_Registration(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
+    iteration_id = models.ForeignKey('Course_Iteration', on_delete=models.CASCADE)
     field_id = models.ForeignKey('Field', on_delete=models.CASCADE)
     field_value = models.CharField(max_length=200)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         rep = self.course_id.course_name + ', '
+        rep += ' (' + self.iteration_id.iteration_name + '), '
         rep += self.user_id.username + ', '
         rep += self.field_id.field_name + ', '
         rep += self.field_value + ' ('
@@ -25,8 +27,13 @@ class User_Course_Registration(models.Model):
 
 class User_Course_Progress_Manager(models.Manager):
     def lowest_unfinished(self):
-        #course_id
-        courses = User_Course_Progress.objects.filter(iteration_id__course_active=True).order_by('user_id', 'iteration_id')
+        """
+        Finds the lowest unfinished or last Progress Entry for a user/course combination.
+
+        :return:
+        """
+        #courses = User_Course_Progress.objects.filter(iteration_id__course_active=True).order_by('user_id', 'iteration_id')
+        courses = User_Course_Progress.objects.all().order_by('user_id', 'iteration_id')
         user_id = 0
         course_id = 0
         reduced_courses = []
@@ -68,7 +75,6 @@ class User_Course_Progress_Manager(models.Manager):
 
 class User_Course_Progress(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    # iteration_id statt course_id
     iteration_id = models.ForeignKey('Course_Iteration', on_delete=models.CASCADE)
     user_progress_id = models.ForeignKey('Progress', on_delete=models.CASCADE)
     progress_reached = models.BooleanField(default=False)
@@ -128,16 +134,33 @@ class Course_Iteration(models.Model):
     course_registration = models.BooleanField(default=True)
     course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     seats_max = models.IntegerField()
+    slug = models.SlugField(max_length=200, blank=True)
 
     @property
     def seats_cur(self):
-        seats_cur = User_Course_Registration.objects.filter(course_id=self.id)\
+        seats_cur = User_Course_Registration.objects.filter(iteration_id=self.id)\
             .values('user_id').annotate(user_count = models.Count('user_id')).count()
         return seats_cur
 
+    def _get_unique_slug(self):
+        course_slug = Course.objects.get(id = self.course_id_id)
+        slug = course_slug.slug +'-' + slugify(self.iteration_name)
+        unique_slug = slug
+        num = 1
+        while Course_Iteration.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save()
+
+
     def __str__(self):
         repstring = self.course_id.course_name
-        repstring += ' (' + self.iteration_name + ')'
+        repstring += ' (' + self.slug + ')'
 
         return repstring
 
