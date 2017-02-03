@@ -287,6 +287,14 @@ class TeacherCoursesAdd(generic.CreateView):
         return HttpResponseRedirect('/course_mgmt/teacher_courses')
 
 
+class TeacherIterationAdd(generic.CreateView):
+    model = Course_Iteration
+    template_name = 'course_registration/iteration_add.html'
+    fields = ('course_id', 'iteration_name', 'course_active',
+              'course_registration', 'course_progress', 'seats_max')
+    success_url = '/course_mgmt/teacher_courses'
+
+
 class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     model = Course_Iteration
     template_name = 'course_registration/teacher_courses_detail.html'

@@ -58,6 +58,7 @@
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
             <a href="{% url "teacher_courses_add" %}?next={{ request.path|urlencode }}"  class="btn btn-default">Add Course</a>
+            <a href="{% url "teacher_iteration_add" %}?next={{ request.path|urlencode }}"  class="btn btn-default">Add Course Iteration</a>
         </form>
     </div>
 </div>
