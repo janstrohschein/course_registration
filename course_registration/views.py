@@ -274,15 +274,21 @@ class TeacherCoursesAdd(generic.CreateView):
         :return:
         """
 
-        att = {'course_name': request.POST['course_name'],
-               'course_teacher': get_user(request),
-               'course_progress': Progress.objects.get(id=request.POST['course_progress']),
-               'seats_max': request.POST['seats_max']}
+        course_att = {'course_name': request.POST['course_name'],
+               'course_teacher': get_user(request)}
 
-        course = Course.objects.create(**att)
+        course = Course.objects.create(**course_att)
 
         # adds many-to-many entries for all required fields
         course.required_fields.add(*request.POST.getlist('required_fields'))
+
+        iter_att = {'course_id': course,
+                    'iteration_name': request.POST['iteration_name'],
+                    'course_progress': Progress.objects.get(id=request.POST['course_progress']),
+                    'seats_max': request.POST['seats_max']}
+
+        iteration = Course_Iteration.objects.create(**iter_att)
+
 
         return HttpResponseRedirect('/course_mgmt/teacher_courses')
 

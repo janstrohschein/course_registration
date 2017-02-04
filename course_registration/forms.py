@@ -19,9 +19,13 @@ class MyUserCreationForm(forms.ModelForm):
 
 class TeacherCoursesAddForm(forms.ModelForm):
 
+    iteration_name = forms.CharField(max_length=200)
+    course_progress = forms.ModelChoiceField(queryset= Progress.objects.all())
+    seats_max = forms.IntegerField()
+
     class Meta:
         model = Course
-        fields = ('course_name', 'required_fields')
+        fields = ('course_name', 'iteration_name', 'course_progress', 'seats_max', 'required_fields')
         widgets = {"required_fields": CheckboxSelectMultiple(), }
 
 
