@@ -10,7 +10,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from course_registration.models import Course, User_Course_Registration, User_Course_Progress, Field, Progress,\
     Course_Iteration
 from django.contrib.auth.models import User
-from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm, CourseProgressUpdateForm
+from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm, CourseProgressUpdateForm, \
+    TeacherIterationAddForm
 from django.contrib.messages.views import SuccessMessageMixin
 from course_registration.ExcelWriter import ExcelWriter
 
@@ -296,9 +297,15 @@ class TeacherCoursesAdd(generic.CreateView):
 class TeacherIterationAdd(generic.CreateView):
     model = Course_Iteration
     template_name = 'course_registration/iteration_add.html'
-    fields = ('course_id', 'iteration_name', 'course_active',
-              'course_registration', 'course_progress', 'seats_max')
+    form_class = TeacherIterationAddForm
+    #fields = ('course_id', 'iteration_name', 'course_active',
+    #          'course_registration', 'course_progress', 'seats_max')
     success_url = '/course_mgmt/teacher_courses'
+
+    def get_form_kwargs(self):
+        kwargs = super(TeacherIterationAdd, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):

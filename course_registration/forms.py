@@ -28,6 +28,18 @@ class TeacherCoursesAddForm(forms.ModelForm):
         fields = ('course_name', 'iteration_name', 'course_progress', 'seats_max', 'required_fields')
         widgets = {"required_fields": CheckboxSelectMultiple(), }
 
+class TeacherIterationAddForm(forms.ModelForm):
+
+    class Meta:
+        model = Course_Iteration
+        fields = ('course_id', 'iteration_name', 'course_active',
+              'course_registration', 'course_progress', 'seats_max')
+
+    def __init__(self, *args, **kwargs):
+       user = kwargs.pop('user')
+       super(TeacherIterationAddForm, self).__init__(*args, **kwargs)
+       self.fields['course_id'].queryset = Course.objects.filter(course_teacher =user)
+
 
 class CourseProgressUpdateForm(forms.ModelForm):
 
