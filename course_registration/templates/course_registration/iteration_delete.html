@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content%}
+<div class="container">
+    <div class="jumbotron container-fluid">
+        <h1>Course overview</h1>
+    </div>
+    <div class="col-md-12">
+        <form action="" method="post">{% csrf_token %}
+        <p>Are you sure you want to delete "{{ object }}"?</p>
+        <input type="submit" value="Confirm" />
+        </form>
+
+    </div>
+</div>
+{% endblock %}

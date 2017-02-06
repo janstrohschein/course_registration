@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
+from django.http import Http404
 from collections import OrderedDict
 import sys
 from django.contrib.auth import get_user, authenticate, login
@@ -298,14 +299,25 @@ class TeacherIterationAdd(generic.CreateView):
     model = Course_Iteration
     template_name = 'course_registration/iteration_add.html'
     form_class = TeacherIterationAddForm
-    #fields = ('course_id', 'iteration_name', 'course_active',
-    #          'course_registration', 'course_progress', 'seats_max')
     success_url = '/course_mgmt/teacher_courses'
 
     def get_form_kwargs(self):
         kwargs = super(TeacherIterationAdd, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+class TeacherIterationDelete(generic.DeleteView):
+    model = Course_Iteration
+    template_name = 'course_registration/iteration_delete.html'
+    success_url = '/course_mgmt/teacher_courses'
+
+    def get_object(self, queryset=None):
+        """ Hook to ensure object is owned by request.user. """
+        obj = super(TeacherIterationDelete, self).get_object()
+        if not obj.course_id.course_teacher == self.request.user:
+            raise Http404
+        return obj
 
 
 class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):

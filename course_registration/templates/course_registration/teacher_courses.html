@@ -21,6 +21,7 @@
                             <th>{% trans "Registration possible" %}</th>
                             <th>{% trans "URL" %}</th>
                             <th>{% trans "Seats" %}</th>
+                            <th>{% trans "Delete" %}</th>
                             </tr>
                     </thead>
                     <tbody>
@@ -47,6 +48,8 @@
 
                         <td>/course_mgmt/course/{{ course.slug }}</td>
                         <td>{{course.seats_cur}} / {{ course.seats_max }}</td>
+                        <td><a href="/course_mgmt/teacher_courses/delete_iteration/{{ course.id }}" class="btn btn-default">X</a> </td>
+
                     </tr>
                     {% endfor %}
                     </tbody>
