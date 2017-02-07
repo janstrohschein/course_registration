@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-gk8-#=25fls41*^(def5f4$n4#jcwy3dhc%ji3k_cr7(+54qb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['lwivs35.gm.fh-koeln.de']
 
 
 # Application definition
@@ -126,6 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = "/home/course_registration/course_registration/static"
+STATICFILES_DIRS = { "/home/course_registration/course_registration/static", }
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
