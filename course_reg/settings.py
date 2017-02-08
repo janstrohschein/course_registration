@@ -125,9 +125,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = "/home/course_registration/course_registration/static"
-STATICFILES_DIRS = { "/home/course_registration/course_registration/static", }
+STATIC_URL = 'http://lwivs35.gm.fh-koeln.de:8000/static/'
+STATIC_ROOT = "/home/course_registration/course_registration/static/"
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'

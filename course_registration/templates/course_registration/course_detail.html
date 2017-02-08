@@ -8,6 +8,7 @@
         <h1>{{ course.course_id.course_name }}</h1>
         <p>{% trans "Current Progress: " %} {{ course.course_progress }} </p>
     </div>
+        {% if user.is_authenticated %}
         <div class="col-md-12">
           <h2>{% trans "Required Information" %}</h2>
             {% if course.course_id.required_fields %}
@@ -30,5 +31,8 @@
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
         </div>
+        {% else %}
+            <h2>{% trans "Please create an account to register" %}</h2>
+        {% endif %}
 </div>
 {% endblock %}
