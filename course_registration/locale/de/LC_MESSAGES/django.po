@@ -1,0 +1,273 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-09 15:41+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: course_registration/templates/base.html:35
+#: course_registration/templates/templates/base.html:35
+msgid "Course Mgmt"
+msgstr "Kursmanagement"
+
+#: course_registration/templates/base.html:39
+#: course_registration/templates/templates/base.html:39
+msgid "Course List"
+msgstr "Kursliste"
+
+#: course_registration/templates/base.html:41
+#: course_registration/templates/course_registration/my_courses.html:8
+#: course_registration/templates/templates/base.html:41
+#: course_registration/templates/templates/course_registration/my_courses.html:8
+msgid "My Courses"
+msgstr "Meine Kurse"
+
+#: course_registration/templates/base.html:44
+#: course_registration/templates/templates/base.html:44
+msgid "Teaching Courses"
+msgstr "Meine angebotenen Kurse"
+
+#: course_registration/templates/course_registration/course_detail.html:9
+#: course_registration/templates/templates/course_registration/course_detail.html:9
+msgid "Current Progress: "
+msgstr "Aktueller Fortschritt: "
+
+#: course_registration/templates/course_registration/course_detail.html:13
+#: course_registration/templates/templates/course_registration/course_detail.html:13
+msgid "Required Information"
+msgstr "Benötigte Informationen"
+
+#: course_registration/templates/course_registration/course_detail.html:31
+#: course_registration/templates/course_registration/course_list.html:37
+#: course_registration/templates/course_registration/my_courses.html:40
+#: course_registration/templates/course_registration/student_courses_detail.html:57
+#: course_registration/templates/course_registration/teacher_courses.html:61
+#: course_registration/templates/course_registration/teacher_courses_detail.html:56
+#: course_registration/templates/templates/course_registration/course_detail.html:31
+#: course_registration/templates/templates/course_registration/course_list.html:37
+#: course_registration/templates/templates/course_registration/my_courses.html:40
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:57
+#: course_registration/templates/templates/course_registration/teacher_courses.html:61
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:56
+msgid "No entries available"
+msgstr "Keine Einträge vorhanden"
+
+#: course_registration/templates/course_registration/course_detail.html:35
+#: course_registration/templates/templates/course_registration/course_detail.html:35
+msgid "Please create an account to register"
+msgstr "Bitte erstelle einen Account für die Anmeldung"
+
+#: course_registration/templates/course_registration/course_list.html:8
+#: course_registration/templates/templates/course_registration/course_list.html:8
+msgid "Course Management"
+msgstr "Kursmanagement"
+
+#: course_registration/templates/course_registration/course_list.html:9
+#: course_registration/templates/templates/course_registration/course_list.html:9
+msgid "This tool allows you to register for courses or certifications."
+msgstr "Dieses Tool erlaubt die Registrierung für Kurse und Zertifizierungen"
+
+#: course_registration/templates/course_registration/course_list.html:12
+#: course_registration/templates/templates/course_registration/course_list.html:12
+msgid "Available Courses"
+msgstr "Verfügbare Kurse"
+
+#: course_registration/templates/course_registration/course_list.html:17
+#: course_registration/templates/course_registration/my_courses.html:17
+#: course_registration/templates/course_registration/my_courses.html:47
+#: course_registration/templates/course_registration/teacher_courses.html:18
+#: course_registration/templates/templates/course_registration/course_list.html:17
+#: course_registration/templates/templates/course_registration/my_courses.html:17
+#: course_registration/templates/templates/course_registration/my_courses.html:47
+#: course_registration/templates/templates/course_registration/teacher_courses.html:18
+msgid "Name"
+msgstr "Name"
+
+#: course_registration/templates/course_registration/course_list.html:18
+#: course_registration/templates/course_registration/my_courses.html:18
+#: course_registration/templates/course_registration/my_courses.html:48
+#: course_registration/templates/course_registration/student_courses_detail.html:19
+#: course_registration/templates/course_registration/teacher_courses.html:19
+#: course_registration/templates/course_registration/teacher_courses_detail.html:26
+#: course_registration/templates/course_registration/teacher_courses_detail.html:66
+#: course_registration/templates/templates/course_registration/course_list.html:18
+#: course_registration/templates/templates/course_registration/my_courses.html:18
+#: course_registration/templates/templates/course_registration/my_courses.html:48
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:19
+#: course_registration/templates/templates/course_registration/teacher_courses.html:19
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:26
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:66
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: course_registration/templates/course_registration/course_list.html:19
+#: course_registration/templates/course_registration/teacher_courses.html:23
+#: course_registration/templates/templates/course_registration/course_list.html:19
+#: course_registration/templates/templates/course_registration/teacher_courses.html:23
+msgid "Seats"
+msgstr "Plätze"
+
+#: course_registration/templates/course_registration/course_list.html:30
+#: course_registration/templates/course_registration/register.html:16
+#: course_registration/templates/templates/course_registration/course_detail.html:28
+#: course_registration/templates/templates/course_registration/course_list.html:30
+#: course_registration/templates/templates/course_registration/register.html:16
+msgid "Register"
+msgstr "Registrieren"
+
+#: course_registration/templates/course_registration/iteration_add.html:9
+#: course_registration/templates/templates/course_registration/course_add.html:9
+#: course_registration/templates/templates/course_registration/iteration_add.html:9
+msgid "Create new Course"
+msgstr "Neuen Kurs anlegen"
+
+#: course_registration/templates/course_registration/iteration_add.html:17
+#: course_registration/templates/course_registration/student_courses_detail.html:51
+#: course_registration/templates/course_registration/teacher_courses_detail.html:98
+#: course_registration/templates/templates/course_registration/course_add.html:17
+#: course_registration/templates/templates/course_registration/course_detail.html:27
+#: course_registration/templates/templates/course_registration/iteration_add.html:17
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:51
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:98
+msgid "Back"
+msgstr "Zurück"
+
+#: course_registration/templates/course_registration/iteration_delete.html:8
+#: course_registration/templates/course_registration/teacher_courses.html:8
+#: course_registration/templates/templates/course_registration/iteration_delete.html:8
+#: course_registration/templates/templates/course_registration/teacher_courses.html:8
+msgid "Course overview"
+msgstr "Kurs Übersicht"
+
+#: course_registration/templates/course_registration/iteration_delete.html:12
+#: course_registration/templates/templates/course_registration/iteration_delete.html:12
+msgid "Are you sure you want to delete "
+msgstr "Soll der folgende Kurs gelöscht werden: "
+
+#: course_registration/templates/course_registration/iteration_delete.html:13
+#: course_registration/templates/templates/course_registration/iteration_delete.html:13
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: course_registration/templates/course_registration/my_courses.html:9
+#: course_registration/templates/templates/course_registration/my_courses.html:9
+msgid "Overview of your registered courses."
+msgstr "Übersicht deiner angemeldeten Kurse"
+
+#: course_registration/templates/course_registration/my_courses.html:12
+#: course_registration/templates/templates/course_registration/my_courses.html:12
+msgid "Registered Courses"
+msgstr "Angemeldete Kurse"
+
+#: course_registration/templates/course_registration/my_courses.html:19
+#: course_registration/templates/course_registration/my_courses.html:49
+#: course_registration/templates/course_registration/student_courses_detail.html:20
+#: course_registration/templates/templates/course_registration/my_courses.html:19
+#: course_registration/templates/templates/course_registration/my_courses.html:49
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:20
+msgid "Progress reached"
+msgstr "Fortschritt erreicht"
+
+#: course_registration/templates/course_registration/my_courses.html:20
+#: course_registration/templates/course_registration/my_courses.html:50
+#: course_registration/templates/course_registration/student_courses_detail.html:21
+#: course_registration/templates/templates/course_registration/my_courses.html:20
+#: course_registration/templates/templates/course_registration/my_courses.html:50
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:21
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: course_registration/templates/course_registration/my_courses.html:43
+#: course_registration/templates/templates/course_registration/my_courses.html:43
+msgid "Earlier Courses"
+msgstr "Frühere Kurse"
+
+#: course_registration/templates/course_registration/register.html:10
+#: course_registration/templates/templates/course_registration/register.html:10
+msgid "Register a new User"
+msgstr "Neuen Benutzer anmelden"
+
+#: course_registration/templates/course_registration/student_courses_detail.html:11
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:11
+msgid "Progress for "
+msgstr "Fortschritt für"
+
+#: course_registration/templates/course_registration/student_courses_detail.html:60
+#: course_registration/templates/templates/course_registration/student_courses_detail.html:60
+msgid "Permission denied"
+msgstr "Zugriff verweigert"
+
+#: course_registration/templates/course_registration/teacher_courses.html:11
+#: course_registration/templates/templates/course_registration/teacher_courses.html:11
+msgid "Your Courses"
+msgstr "Deine Kurse"
+
+#: course_registration/templates/course_registration/teacher_courses.html:20
+#: course_registration/templates/templates/course_registration/teacher_courses.html:20
+msgid "Active"
+msgstr "Aktiv"
+
+#: course_registration/templates/course_registration/teacher_courses.html:21
+#: course_registration/templates/templates/course_registration/teacher_courses.html:21
+msgid "Registration possible"
+msgstr "Anmeldung möglich"
+
+#: course_registration/templates/course_registration/teacher_courses.html:22
+#: course_registration/templates/templates/course_registration/teacher_courses.html:22
+msgid "URL"
+msgstr "URL"
+
+#: course_registration/templates/course_registration/teacher_courses.html:24
+#: course_registration/templates/templates/course_registration/teacher_courses.html:24
+msgid "Delete"
+msgstr "Löschen"
+
+#: course_registration/templates/course_registration/teacher_courses_detail.html:19
+#: course_registration/templates/course_registration/teacher_courses_detail.html:55
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:19
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:55
+msgid "Students at current progress"
+msgstr "Studenten mit aktuellem Fortschritt"
+
+#: course_registration/templates/course_registration/teacher_courses_detail.html:59
+#: course_registration/templates/templates/course_registration/teacher_courses_detail.html:59
+msgid "Students at earlier progress "
+msgstr "Studenten mit früherem Fortschritt"
+
+#: course_registration/templates/course_registration/toggle_login.html:5
+#: course_registration/templates/course_registration/toggle_login.html:7
+#: course_registration/templates/templates/course_registration/toggle_login.html:5
+#: course_registration/templates/templates/course_registration/toggle_login.html:7
+msgid "Welcome "
+msgstr "Willkommen "
+
+#: course_registration/templates/course_registration/toggle_login.html:16
+#: course_registration/templates/templates/course_registration/toggle_login.html:16
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: course_registration/templates/course_registration/toggle_login.html:18
+#: course_registration/templates/templates/course_registration/toggle_login.html:18
+msgid "Sign up"
+msgstr "Registrieren"
+
+#: course_registration/templates/templates/course_registration/teacher_courses.html:63
+msgid "Add Course"
+msgstr "Kurs hinzufügen"
+
+#: course_registration/templates/templates/course_registration/teacher_courses.html:64
+msgid "Add Course Iteration"
+msgstr "Kurs Durchgang hinzufügen"

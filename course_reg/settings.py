@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-gk8-#=25fls41*^(def5f4$n4#jcwy3dhc%ji3k_cr7(+54qb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
-ALLOWED_HOSTS = ['lwivs35.gm.fh-koeln.de']
+ALLOWED_HOSTS = ['lwivs35.gm.fh-koeln.de', '127.0.0.1']
 
 
 # Application definition
@@ -120,6 +120,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+LOCALE_PATHS = ['/home/course_registration/course_registration/locale',]
 
 
 # Static files (CSS, JavaScript, Images)

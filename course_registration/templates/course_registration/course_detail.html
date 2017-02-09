@@ -24,8 +24,8 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{{ request.GET.next }}" class="btn btn-default">Back</a>
-                    <input type="submit" class="btn btn-default" name="register" value="Register">
+                    <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
+                    <input type="submit" class="btn btn-default" name="register" value="{% trans "Register" %}">
                 </form>
             {% else %}
                 <p> {% trans "No entries available" %}</p>

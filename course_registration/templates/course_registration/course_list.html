@@ -5,7 +5,7 @@
 {% block content%}
 <div class="container">
     <div class="jumbotron container-fluid">
-        <h1>Course Management</h1>
+        <h1>{% trans "Course Management" %}</h1>
         <p>{% trans "This tool allows you to register for courses or certifications." %} </p>
     </div>
         <div class="col-md-12">
@@ -27,7 +27,7 @@
                                 <td>{{course.course_id.course_name}} ({{ course.iteration_name }})</td>
                                 <td>{{course.course_progress}}</td>
                                 <td>{{course.seats_cur}} / {{ course.seats_max }}</td>
-                                <td><a href="/course_mgmt/course/{{ course.slug }}/?next={{ request.path|urlencode }}" class="btn btn-md btn-default"> Register </a></td>
+                                <td><a href="/course_mgmt/course/{{ course.slug }}/?next={{ request.path|urlencode }}" class="btn btn-md btn-default"> {% trans "Register" %}</a></td>
                             </tr>
                         {% endif %}
                     {% endfor %}
