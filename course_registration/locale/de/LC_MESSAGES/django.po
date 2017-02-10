@@ -264,10 +264,10 @@ msgstr "Anmelden"
 msgid "Sign up"
 msgstr "Registrieren"
 
-#: course_registration/templates/templates/course_registration/teacher_courses.html:63
+#: course_registration/templates/course_registration/teacher_courses.html:63
 msgid "Add Course"
 msgstr "Kurs hinzufügen"
 
-#: course_registration/templates/templates/course_registration/teacher_courses.html:64
+#: course_registration/templates/course_registration/teacher_courses.html:64
 msgid "Add Course Iteration"
 msgstr "Kurs Durchgang hinzufügen"
