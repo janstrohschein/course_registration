@@ -59,6 +59,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+settings.py
 
 # Flask stuff:
 instance/
@@ -95,3 +96,4 @@ ENV/
 
 # Rope project settings
 .ropeproject
+course_reg/settings.py

@@ -12,7 +12,7 @@ from course_registration.models import Course, User_Course_Registration, User_Co
     Course_Iteration
 from django.contrib.auth.models import User
 from course_registration.forms import MyUserCreationForm, TeacherCoursesAddForm, CourseProgressUpdateForm, \
-    TeacherIterationAddForm
+    TeacherIterationAddForm, CourseDetailForm
 from django.contrib.messages.views import SuccessMessageMixin
 from course_registration.ExcelWriter import ExcelWriter
 
@@ -168,6 +168,20 @@ class CourseDetail(SuccessMessageMixin, generic.DetailView):
                     User_Course_Progress.objects.get_or_create(**prog_values)
 
         return HttpResponseRedirect('/course_mgmt/my_courses')
+
+
+class CourseDetail2(LoginRequiredMixin, generic.FormView):
+
+    form_class = CourseDetailForm
+    template_name = 'course_registration/course_detail2.html'
+    success_url = 'course_mgmt/my_courses'
+
+    def get_form_kwargs(self):
+        kwargs = super(CourseDetail2, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['course_slug'] = self.kwargs['slug']
+        return kwargs
+
 
 
 class StudentCourses(LoginRequiredMixin, generic.DetailView):

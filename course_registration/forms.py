@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from course_registration.models import Course, Progress, Course_Iteration
+from course_registration.models import Course, Progress, Course_Iteration, User_Course_Registration
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field
 from django.forms.widgets import CheckboxSelectMultiple, ChoiceInput
@@ -39,6 +39,37 @@ class TeacherIterationAddForm(forms.ModelForm):
        user = kwargs.pop('user')
        super(TeacherIterationAddForm, self).__init__(*args, **kwargs)
        self.fields['course_id'].queryset = Course.objects.filter(course_teacher =user)
+
+
+class CourseDetailForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        course_iteration_slug = kwargs.pop('course_slug')
+        super(CourseDetailForm, self).__init__(*args,**kwargs)
+
+        course_iteration = Course_Iteration.objects.get(slug=course_iteration_slug)
+        required_fields = course_iteration.course_id.required_fields.all()
+
+        for field in required_fields:
+            t = 't'
+            if field.field_type == 'CharField':
+                self.fields[field.field_name] = forms.CharField(label=field.field_name, required=True)
+
+            elif field.field_type == 'EmailField':
+                self.fields[field.field_name] = forms.EmailField(max_length=200, required= True)
+
+            elif field.field_type == 'BooleanField':
+                self.fields[field.field_name] = forms.BooleanField(required=True)
+
+            elif field.field_type == 'IntegerField':
+                self.fields[field.field_name] = forms.IntegerField(required=True)
+
+            elif field.field_type == 'ChoiceField':
+                field_choices = field.field_choice_values.split(',')
+                field_choice_tuples = [(f, f) for f in field_choices]
+
+                self.fields[field.field_name] = forms.ChoiceField(choices=field_choice_tuples, required=True)
 
 
 class CourseProgressUpdateForm(forms.ModelForm):

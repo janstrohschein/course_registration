@@ -176,10 +176,8 @@ class Progress(models.Model):
 class Field(models.Model):
     field_name = models.CharField(max_length=200)
     field_type = models.CharField(max_length=200)
+    field_choice_values = models.CharField(max_length=500, blank=True, null=True)
     field_desc = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.field_name
-
-
-### introduce new class course iteration
