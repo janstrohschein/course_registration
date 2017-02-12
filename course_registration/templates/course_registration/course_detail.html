@@ -1,6 +1,7 @@
 ﻿{% extends "base.html" %}
 
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block content%}
 <div class="container">
@@ -11,25 +12,21 @@
         {% if user.is_authenticated %}
         <div class="col-md-12">
           <h2>{% trans "Required Information" %}</h2>
-            {% if course.course_id.required_fields %}
+            <table class="table">
                 <form method="post">
                     {% csrf_token %}
-                    <table class="table table-striped">
-                        <tbody>
-                        {% for field in course.course_id.required_fields.all %}
+                    {% for field in form  %}
                         <tr>
-                            <td>{{field.field_name}}</td>
-                            <td><input id="{{field.field_name}}" name="registration_values.{{field.field_name}}" type="text"></td>
+                        <td>{{ field.label }}</td>
+                        <td>{{ field }}</td>
                         </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
-                    <input type="submit" class="btn btn-default" name="register" value="{% trans "Register" %}">
+                    {% endfor  %}
+                    <tr>
+                        <td><a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a></td>
+                        <td><input type="submit" class="btn btn-default" name="register" value="{% trans "Register" %}"></td>
+                    </tr>
                 </form>
-            {% else %}
-                <p> {% trans "No entries available" %}</p>
-            {% endif %}
+            </table>
         </div>
         {% else %}
             <h2>{% trans "Please create an account to register" %}</h2>

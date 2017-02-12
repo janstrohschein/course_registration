@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from course_registration.models import Course, Progress, Course_Iteration, User_Course_Registration
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field
+from crispy_forms.layout import Submit, Layout
+from crispy_forms.bootstrap import StrictButton
 from django.forms.widgets import CheckboxSelectMultiple, ChoiceInput
 
 
@@ -44,32 +45,34 @@ class TeacherIterationAddForm(forms.ModelForm):
 class CourseDetailForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
-        course_iteration_slug = kwargs.pop('course_slug')
+        course_iteration_slug = args[0].pop('slug')
         super(CourseDetailForm, self).__init__(*args,**kwargs)
 
         course_iteration = Course_Iteration.objects.get(slug=course_iteration_slug)
         required_fields = course_iteration.course_id.required_fields.all()
 
+        reg_prefix = 'registration_values_'
+
         for field in required_fields:
-            t = 't'
+            self.errors[reg_prefix + field.field_name] = self.error_class()
+
             if field.field_type == 'CharField':
-                self.fields[field.field_name] = forms.CharField(label=field.field_name, required=True)
+                self.fields[reg_prefix + field.field_name] = forms.CharField(label=field.field_name)
 
             elif field.field_type == 'EmailField':
-                self.fields[field.field_name] = forms.EmailField(max_length=200, required= True)
+                self.fields[reg_prefix + field.field_name] = forms.EmailField(label=field.field_name, max_length=200)
 
             elif field.field_type == 'BooleanField':
-                self.fields[field.field_name] = forms.BooleanField(required=True)
+                self.fields[reg_prefix + field.field_name] = forms.BooleanField(label=field.field_name)
 
             elif field.field_type == 'IntegerField':
-                self.fields[field.field_name] = forms.IntegerField(required=True)
+                self.fields[reg_prefix + field.field_name] = forms.IntegerField(label=field.field_name)
 
             elif field.field_type == 'ChoiceField':
                 field_choices = field.field_choice_values.split(',')
                 field_choice_tuples = [(f, f) for f in field_choices]
 
-                self.fields[field.field_name] = forms.ChoiceField(choices=field_choice_tuples, required=True)
+                self.fields[reg_prefix + field.field_name] = forms.ChoiceField(label=field.field_name, choices=field_choice_tuples)
 
 
 class CourseProgressUpdateForm(forms.ModelForm):
