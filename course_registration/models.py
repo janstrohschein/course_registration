@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-import sys
+
+FIELD_CHOICES = [('CharField', 'CharField'), ('EmailField', 'EmailField'), ('BooleanField', 'BooleanField'),
+                 ('IntegerField', 'IntegerField'), ('ChoiceField', 'ChoiceField')]
 
 
 class User_Course_Registration(models.Model):
@@ -175,7 +177,7 @@ class Progress(models.Model):
 
 class Field(models.Model):
     field_name = models.CharField(max_length=200)
-    field_type = models.CharField(max_length=200)
+    field_type = models.CharField(max_length=200, choices=FIELD_CHOICES)
     field_choice_values = models.CharField(max_length=500, blank=True, null=True)
     field_desc = models.CharField(max_length=200, blank=True, null=True)
 

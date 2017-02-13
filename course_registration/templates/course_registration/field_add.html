@@ -6,11 +6,11 @@
 {% block content%}
     <div class="container">
         <div class="jumbotron container-fluid">
-            <h1>{% trans "Create new Course Iteration" %}</h1>
+            <h1>{% trans "Create new Field" %}</h1>
         </div>
 
         <div class="col-md-8">
-            <form action="{% url "teacher_iteration_add" %}" method="post">
+            <form action="{% url "teacher_field_add" %}" method="post">
                 <table class="table">
                     {% csrf_token %}
                     {% for field in form  %}

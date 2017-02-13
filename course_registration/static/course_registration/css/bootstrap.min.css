@@ -7076,3 +7076,12 @@ button.close {
     width: 50px;
 
 }
+
+#id_required_fields {
+    list-style-type: none;
+}
+
+.form-width-200 input[type=text], input[type=number], input[type=email], select{
+    width: 200px
+}
+}

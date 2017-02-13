@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from course_registration.models import Course, Progress, Course_Iteration, User_Course_Registration
+from course_registration.models import Course, Progress, Course_Iteration, Field
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
 from crispy_forms.bootstrap import StrictButton
@@ -33,8 +33,8 @@ class TeacherIterationAddForm(forms.ModelForm):
 
     class Meta:
         model = Course_Iteration
-        fields = ('course_id', 'iteration_name', 'course_active',
-              'course_registration', 'course_progress', 'seats_max')
+        fields = ('course_id', 'iteration_name', 'course_progress', 'seats_max',
+                  'course_active', 'course_registration')
 
     def __init__(self, *args, **kwargs):
        user = kwargs.pop('user')

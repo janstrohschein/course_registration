@@ -9,13 +9,19 @@
             <h1>{% trans "Create new Course" %}</h1>
         </div>
 
-        <div>
+        <div class="col-md-8">
             <form action="{% url "teacher_courses_add" %}" method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-
-            <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
-            <input type="submit" class="btn btn-default" value="Submit" />
+                <table class="table">
+                    {% csrf_token %}
+                    {% for field in form  %}
+                        <tr>
+                        <td>{{ field.label }}</td>
+                        <td class="form-width-200">{{ field }}</td>
+                        </tr>
+                    {% endfor  %}
+                </table>
+                <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
+                <input type="submit" class="btn btn-default" value="Submit" />
             </form>
         </div>
     </div>

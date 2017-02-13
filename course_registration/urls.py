@@ -14,6 +14,8 @@ urlpatterns = [
     url(r'^teacher_courses$', views.TeacherCourses.as_view(), name='teacher_courses'),
     url(r'^teacher_courses/add_course$', views.TeacherCoursesAdd.as_view(), name='teacher_courses_add'),
     url(r'^teacher_courses/add_iteration$', views.TeacherIterationAdd.as_view(), name='teacher_iteration_add'),
+    url(r'^teacher_courses/add_field$', views.TeacherFieldAdd.as_view(), name='teacher_field_add'),
+
     url(r'^teacher_courses/delete_iteration/(?P<pk>\d+)$', views.TeacherIterationDelete.as_view(), name='teacher_iteration_delete'),
 
     url(r'^teacher_courses_detail/(?P<slug>[-\w]+)$', views.TeacherCoursesDetail.as_view(), name='teacher_courses_detail'),
