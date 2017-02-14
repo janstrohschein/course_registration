@@ -29,6 +29,19 @@ class TeacherCoursesAddForm(forms.ModelForm):
         fields = ('course_name', 'iteration_name', 'course_progress', 'seats_max', 'required_fields')
         widgets = {"required_fields": CheckboxSelectMultiple(), }
 
+    def __init__(self, *args, **kwargs):
+        course_form_values = None
+        if 'course_form_values' in kwargs:
+            course_form_values = kwargs.pop('course_form_values')
+        super(TeacherCoursesAddForm, self).__init__(*args, **kwargs)
+
+        if course_form_values is not None:
+            self.fields['course_name'].initial = course_form_values['course_name']
+            self.fields['course_progress'].initial = course_form_values['course_progress']
+            self.fields['iteration_name'].initial = course_form_values['iteration_name']
+            self.fields['seats_max'].initial = course_form_values['seats_max']
+            self.fields['required_fields'].initial = course_form_values['required_fields']
+
 class TeacherIterationAddForm(forms.ModelForm):
 
     class Meta:

@@ -7084,4 +7084,6 @@ button.close {
 .form-width-200 input[type=text], input[type=number], input[type=email], select{
     width: 200px
 }
+.form-width-200 ul{
+    padding-left: 0px
 }

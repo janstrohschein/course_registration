@@ -15,13 +15,17 @@
                     {% csrf_token %}
                     {% for field in form  %}
                         <tr>
-                        <td>{{ field.label }}</td>
-                        <td class="form-width-200">{{ field }}</td>
+                            {% if field.label == 'Required fields' %}
+                                <td>{{ field.label }} <input type="submit" class="btn btn-sm btn-success" name="field_add" value="+" formnovalidate></td>
+                            {% else %}
+                                <td>{{ field.label }}</td>
+                            {% endif %}
+                            <td class="form-width-200">{{ field }}</td>
                         </tr>
                     {% endfor  %}
                 </table>
                 <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
-                <input type="submit" class="btn btn-default" value="Submit" />
+                <input type="submit" class="btn btn-default" name="course_add" value="Submit" />
             </form>
         </div>
     </div>

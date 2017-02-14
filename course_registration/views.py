@@ -341,6 +341,12 @@ class TeacherCoursesAdd(generic.CreateView):
     def dispatch(self, *args, **kwargs):
         return super(TeacherCoursesAdd, self).dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(TeacherCoursesAdd, self).get_form_kwargs()
+        if 'course_form_values' in self.request.session:
+            kwargs['course_form_values'] = self.request.session['course_form_values']
+        return kwargs
+
     def post(self, request, **kwargs):
         """
 
@@ -354,24 +360,33 @@ class TeacherCoursesAdd(generic.CreateView):
         :param kwargs:
         :return:
         """
+        if 'field_add' in request.POST:
+            request.session['course_form_values'] = request.POST.copy()
+            if 'required_fields' in request.POST:
+                request.session['course_form_values']['required_fields'] = request.POST.getlist('required_fields')
 
-        course_att = {'course_name': request.POST['course_name'],
-               'course_teacher': get_user(request)}
+            return HttpResponseRedirect('/course_mgmt/teacher_courses/add_field?next=' + request.path)
 
-        course = Course.objects.create(**course_att)
+        elif 'course_add' in request.POST:
+            request.session.pop('course_form_values')
 
-        # adds many-to-many entries for all required fields
-        course.required_fields.add(*request.POST.getlist('required_fields'))
+            course_att = {'course_name': request.POST['course_name'],
+                   'course_teacher': get_user(request)}
 
-        iter_att = {'course_id': course,
-                    'iteration_name': request.POST['iteration_name'],
-                    'course_progress': Progress.objects.get(id=request.POST['course_progress']),
-                    'seats_max': request.POST['seats_max']}
+            course = Course.objects.create(**course_att)
 
-        iteration = Course_Iteration.objects.create(**iter_att)
+            # adds many-to-many entries for all required fields
+            course.required_fields.add(*request.POST.getlist('required_fields'))
+
+            iter_att = {'course_id': course,
+                        'iteration_name': request.POST['iteration_name'],
+                        'course_progress': Progress.objects.get(id=request.POST['course_progress']),
+                        'seats_max': request.POST['seats_max']}
+
+            iteration = Course_Iteration.objects.create(**iter_att)
 
 
-        return HttpResponseRedirect('/course_mgmt/teacher_courses')
+            return HttpResponseRedirect('/course_mgmt/teacher_courses')
 
 
 class TeacherFieldAdd(generic.CreateView):
