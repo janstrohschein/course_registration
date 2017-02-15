@@ -99,17 +99,6 @@ class Course(models.Model):
     required_fields = models.ManyToManyField('Field')
     slug = models.SlugField(max_length=200, blank=True)
 
-    # course_active = models.BooleanField(default=True)
-    # course_registration = models.BooleanField(default=True)
-    # course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
-    # seats_max = models.IntegerField()
-    #
-    # @property
-    # def seats_cur(self):
-    #     seats_cur = User_Course_Registration.objects.filter(course_id=self.id)\
-    #         .values('user_id').annotate(user_count = models.Count('user_id')).count()
-    #     return seats_cur
-
     def __str__(self):
         return self.course_name
 
@@ -131,10 +120,10 @@ class Course(models.Model):
 class Course_Iteration(models.Model):
 
     course_id = models.ForeignKey('Course', on_delete=models.CASCADE)
+    course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     iteration_name = models.CharField(max_length=200)
     course_active = models.BooleanField(default=True)
     course_registration = models.BooleanField(default=True)
-    course_progress = models.ForeignKey('Progress', on_delete=models.CASCADE)
     seats_max = models.IntegerField()
     slug = models.SlugField(max_length=200, blank=True)
 
