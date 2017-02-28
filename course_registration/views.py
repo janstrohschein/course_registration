@@ -368,7 +368,8 @@ class TeacherCoursesAdd(generic.CreateView):
             return HttpResponseRedirect('/course_mgmt/teacher_courses/add_field?next=' + request.path)
 
         elif 'course_add' in request.POST:
-            request.session.pop('course_form_values')
+            if 'course_form_values' in request.session:
+                request.session.pop('course_form_values')
 
             course_att = {'course_name': request.POST['course_name'],
                    'course_teacher': get_user(request)}
