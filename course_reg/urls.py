@@ -23,6 +23,7 @@ from course_registration import views
 urlpatterns = [
     url(r'^$', lambda r: HttpResponseRedirect('course_mgmt/courses')),
     url(r'^course_mgmt/', include('course_registration.urls')),
+    url(r'^reset_password/', include('password_reset.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^register$', views.UserAdd.as_view() , {'template_name': 'register.html'},
         name='register'),
