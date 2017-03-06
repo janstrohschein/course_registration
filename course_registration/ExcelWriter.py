@@ -30,6 +30,7 @@ class ExcelWriter():
         """
 
         ws = self.out_wb.add_worksheet('Übersicht')
+        ws.set_column('A:N', 12)
 
         row = []
         for field in field_list:
@@ -40,7 +41,6 @@ class ExcelWriter():
 
         for key, student in student_list.items():
             row = []
-
 
             for item in student:
                 row.append(item[1])

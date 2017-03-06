@@ -3,6 +3,7 @@ from django.views import generic
 from django.http import Http404
 from collections import OrderedDict
 import sys
+import json
 from django.contrib.auth import get_user, authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
@@ -473,7 +474,8 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
 
         return render(request, 'course_registration/teacher_courses_detail.html',
                       {'form': form, 'course': course, 'student_complete_list': student_complete_dict,
-                       'student_incomplete_list': student_incomplete_dict, 'field_list': fields})
+                       'student_incomplete_list': student_incomplete_dict, 'field_list': fields,
+                       'json_complete': json.dumps(student_complete_dict), 'json_incomplete': json.dumps(student_incomplete_dict)})
 
     def post(self, request, *args, **kwargs):
 
@@ -508,25 +510,32 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
 
             return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'])
 
-        elif 'export' in request.POST:
-            fields = course.required_fields.all()
-            course_details = User_Course_Registration.objects.filter(course_id=course.id).distinct().values()
-            student_list = {}
+        elif any(key in request.POST for key in ['export', 'export_good', 'export_late']):
+            fields = course.course_id.required_fields.all()
+
+            student_complete_list = json.loads(request.POST['student_complete_list'])
+            student_incomplete_list = json.loads(request.POST['student_incomplete_list'])
+
+            if 'export_good' in request.POST:
+                new_student_list = student_complete_list
+            elif 'export_late' in request.POST:
+                new_student_list = student_incomplete_list
+            else:
+                new_student_list = {**student_complete_list, **student_incomplete_list}
+
             field_list = []
 
             for field in fields:
                 field_list.append(str(field))
+            field_list.append('Fortschritt')
+            field_list.append('Bestanden')
 
-            for entry in course_details:
-                if entry['user_id_id'] not in student_list:
-                    student_list[entry['user_id_id']] = {}
-                student_list[entry['user_id_id']][str(entry['field_id_id'])] = entry['field_value']
-
-            for student in student_list:
-                student_list[student] = sorted(student_list[student].items())
+            for student in new_student_list:
+                new_student_list[student] = sorted(new_student_list[student].items())
 
             new_excel = ExcelWriter()
-            new_excel.write_student_list(course, field_list, student_list)
+
+            new_excel.write_student_list(course, field_list, new_student_list)
             new_excel.out_wb.close()
 
             messages.success(request, 'Export finished!')
