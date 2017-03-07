@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{%block content%}
+
+<div class="container">
+    <div class="jumbotron container-fluid">
+            <h1>{% trans "Send Email to your students" %}</h1>
+    </div>
+    <div class="col-md-8">
+
+        <form method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            <div><textarea rows="10" cols="50" name="text"></textarea></div>
+            <div><a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a><input class="btn btn-default" type="submit" value="Send Email"></div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

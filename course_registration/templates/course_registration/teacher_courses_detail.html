@@ -11,12 +11,13 @@
         <div class="col-md-12" style="padding-top: 15px">
         <form action="" method="post">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
             <div class="row">
                 <div class="col-md-8">{{ form|crispy }}</div>
                 <div class="col-md-4"><input type="submit" class="btn btn-default" name="update_course_progress" value="Update"></div>
             </div>
             {% if student_complete_list %}
-                <h2>{% trans "Students at current progress" %} <input type="submit" class="btn btn-default btn-sm" name="export_good" value="Export"></h2>
+                <h2>{% trans "Students at current progress" %} </h2>
                 <input type="hidden" name="student_complete_list" value="{{json_complete}}">
                 <table class="table table-striped">
                     <thead>
@@ -52,13 +53,15 @@
                     {% endfor %}
                     </tbody>
                 </table>
+
+                <input type="submit" class="btn-link btn-xs" name="export_good" value="Export"><input type="submit" class="btn-link btn-xs" name="email_good" value="Send Email">
             {% else %}
                 <h2>{% trans "Students at current progress" %}</h2>
                 <p> {% trans "No entries available" %}</p>
             {% endif %}
             {% if student_incomplete_list %}
                 <input type="hidden" name="student_incomplete_list" value="{{json_incomplete}}">
-                <h2>{% trans "Students at earlier progress " %} <input type="submit" class="btn btn-default btn-sm" name="export_late" value="Export"></h2>
+                <h2>{% trans "Students at earlier progress " %} </h2>
                 <table class="table table-striped">
                     <thead>
                             <tr>
@@ -93,13 +96,16 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <input type="submit" class="btn-link btn-xs" name="export_late" value="Export"><input type="submit" class="btn-link btn-xs" name="email_late" value="Send Email">
             {% endif %}
             {% include "show_pagination.html"%}
             {% include "show_message.html"%}
-
-            <a href="/course_mgmt/teacher_courses" class="btn btn-default">{% trans "Back" %}</a>
-            <input type="submit" class="btn btn-default" name="update_student_progress" value="Update">
-            <input type="submit" class="btn btn-default" name="export" value="Export all">
+            <div>
+                <a href="/course_mgmt/teacher_courses" class="btn btn-default">{% trans "Back" %}</a>
+                <input type="submit" class="btn btn-default" name="update_student_progress" value="Update">
+                <input type="submit" class="btn btn-default" name="export" value="Export all">
+                <input type="submit" class="btn btn-default" name="email_all" value="Email to all">
+            </div>
             </form>
 
         </div>

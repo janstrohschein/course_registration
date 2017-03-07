@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from django.http import Http404
+from django.core.mail import send_mail
 from collections import OrderedDict
 import sys
 import json
@@ -480,6 +481,9 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     def post(self, request, *args, **kwargs):
 
         course = Course_Iteration.objects.get(slug=kwargs['slug'])
+        student_complete_list = json.loads(request.POST['student_complete_list'])
+        student_incomplete_list = json.loads(request.POST['student_incomplete_list'])
+
 
         if 'update_course_progress' in request.POST:
             # write new course progress
@@ -513,15 +517,12 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         elif any(key in request.POST for key in ['export', 'export_good', 'export_late']):
             fields = course.course_id.required_fields.all()
 
-            student_complete_list = json.loads(request.POST['student_complete_list'])
-            student_incomplete_list = json.loads(request.POST['student_incomplete_list'])
-
             if 'export_good' in request.POST:
-                new_student_list = student_complete_list
+                student_list = student_complete_list
             elif 'export_late' in request.POST:
-                new_student_list = student_incomplete_list
+                student_list = student_incomplete_list
             else:
-                new_student_list = {**student_complete_list, **student_incomplete_list}
+                student_list = {**student_complete_list, **student_incomplete_list}
 
             field_list = []
 
@@ -530,12 +531,12 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             field_list.append('Fortschritt')
             field_list.append('Bestanden')
 
-            for student in new_student_list:
-                new_student_list[student] = sorted(new_student_list[student].items())
+            for student in student_list:
+                student_list[student] = sorted(student_list[student].items())
 
             new_excel = ExcelWriter()
 
-            new_excel.write_student_list(course, field_list, new_student_list)
+            new_excel.write_student_list(course, field_list, student_list)
             new_excel.out_wb.close()
 
             messages.success(request, 'Export finished!')
@@ -550,6 +551,44 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
             return response
+
+        elif any(key in request.POST for key in ['email_all', 'email_good', 'email_late']):
+            if 'email_good' in request.POST:
+                student_list = student_complete_list
+            elif 'email_late' in request.POST:
+                student_list = student_incomplete_list
+            else:
+                student_list = {**student_complete_list, **student_incomplete_list}
+
+            student_ids = [key for key in student_list.keys()]
+            students = User.objects.filter(id__in=student_ids)
+            student_email = [student.email for student in students]
+            request.session['email_information'] = {}
+            request.session['email_information']['course'] = course.course_id.course_name
+            request.session['email_information']['students'] = student_email
+
+            return HttpResponseRedirect('/course_mgmt/teacher_send_email/' + kwargs['slug'] + '?next=' + request.POST['next'])
+
+
+class TeacherSendEmail(generic.View):
+    template_name = 'course_registration/teacher_send_email.html'
+
+    def get(self, request, **kwargs):
+
+        return render(request, 'course_registration/teacher_send_email.html',
+                      )
+
+    def post(self, request, **kwargs):
+        subject = request.session['email_information']['course']
+        students = request.session['email_information']['students']
+        text = request.POST.get('text')
+        send_mail(
+            subject,
+            text,
+            'course_registration@th-koeln.de',
+            students,
+        )
+        return HttpResponseRedirect('/course_mgmt/teacher_courses_detail/' + kwargs['slug'] )
 
 
 class StudentCoursesDetail(generic.View):
