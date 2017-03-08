@@ -19,14 +19,14 @@
             {% if student_complete_list %}
                 <h2>{% trans "Students at current progress" %} </h2>
                 <input type="hidden" name="student_complete_list" value="{{json_complete}}">
-                <table class="table table-striped">
+                <div class="table-responsive">
+                <table class="table table-condensed table-striped ">
                     <thead>
                             <tr>
+                            <th>{% trans "Progress" %}</th>
                             {% for field in field_list%}
                             <th>{% trans field.field_name %}</th>
                             {% endfor %}
-                            <th>{% trans "Progress" %}</th>
-
                             </tr>
                     </thead>
                     <tbody>
@@ -41,7 +41,8 @@
                                     {% else %}
                                         <input type="checkbox" name="student_id" id="student_id"  value="{{student}}">
                                     {% endif %}
-                                </td>
+                            {% elif key == 'progress' %}
+                                {{ item }}</td>
                             {% else %}
                                 <td>{{ item }}</td>
                             {% endif %}
@@ -53,6 +54,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                </div>
 
                 <input type="submit" class="btn-link btn-xs" name="export_good" value="Export"><input type="submit" class="btn-link btn-xs" name="email_good" value="Send Email">
             {% else %}
@@ -62,14 +64,14 @@
             {% if student_incomplete_list %}
                 <input type="hidden" name="student_incomplete_list" value="{{json_incomplete}}">
                 <h2>{% trans "Students at earlier progress " %} </h2>
-                <table class="table table-striped">
+                <div class="table-responsive">
+                <table class="table table-condensed table-striped">
                     <thead>
                             <tr>
-                            {% for field in field_list%}
+                            <th>{% trans "Progress" %}</th>
+                            {% for field in field_list %}
                             <th>{% trans field.field_name %}</th>
                             {% endfor %}
-                            <th>{% trans "Progress" %}</th>
-
                             </tr>
                     </thead>
                     <tbody>
@@ -84,7 +86,8 @@
                                     {% else %}
                                         <input type="checkbox" name="student_id" id="student_id"  value="{{student}}">
                                     {% endif %}
-                                </td>
+                            {% elif key == 'progress' %}
+                                {{ item }}</td>
                             {% else %}
                                 <td>{{ item }}</td>
                             {% endif %}
@@ -96,6 +99,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                </div>
                 <input type="submit" class="btn-link btn-xs" name="export_late" value="Export"><input type="submit" class="btn-link btn-xs" name="email_late" value="Send Email">
             {% endif %}
             {% include "show_pagination.html"%}

@@ -104,74 +104,6 @@ class CourseList(generic.ListView):
         return new_context
 
 
-# class CourseDetail(SuccessMessageMixin, generic.DetailView):
-#     """
-#     CourseDetail is used to register users for a course
-#     """
-#     model = Course_Iteration
-#     template_name = 'course_registration/course_detail_bak.html'
-#     context_object_name = 'course'
-#     fields = '__all__'
-#     success_message = 'Registered successfully!'
-#
-#     def post(self, request, **kwargs):
-#         """
-#
-#         :param request:
-#         :param kwargs:
-#         :return:
-#         """
-#
-#         # get number of required fields
-#         # if submitted number is equal proceed registration
-#         course = Course_Iteration.objects.get(slug=kwargs['slug'])
-#         count_required_fields = course.course_id.required_fields.count()
-#
-#         # +2 because request.POST contains also the csrf and register token
-#         if course.course_registration is True and count_required_fields + 2 == len(request.POST) \
-#                 and course.seats_cur < course.seats_max:
-#
-#             # for every submitted field the field, field value, user and course will
-#             # be inserted into CourseRegistration
-#             user = get_user(request)
-#
-#             for entry in request.POST:
-#                 if entry.startswith('registration_values'):
-#                     try:
-#                         field = Field.objects.get(field_name__exact=entry[20:])
-#                         if field:
-#                             reg_values = {'user_id': user,
-#                                           'course_id': course.course_id,
-#                                           'iteration_id': course,
-#                                           'field_id': field,
-#                                           'field_value': request.POST[entry]}
-#
-#                             User_Course_Registration.objects.get_or_create(**reg_values)
-#
-#                     except:
-#                         print(sys.exc_info())
-#
-#             course_progress = User_Course_Progress.objects.filter(iteration_id=course).values_list('user_progress_id')
-#
-#             if course_progress.count() <= 1:
-#                 prog_values = {'user_id': user,
-#                                'iteration_id': course,
-#                                'user_progress_id': course.course_progress,
-#                                'progress_reached': True}
-#
-#                 User_Course_Progress.objects.get_or_create(**prog_values)
-#             else:
-#                 for progress in course_progress:
-#                     prog_values = {'user_id': user,
-#                                    'iteration_id': course,
-#                                    'user_progress_id_id': progress[0],
-#                                    'progress_reached': True}
-#
-#                     User_Course_Progress.objects.get_or_create(**prog_values)
-#
-#         return HttpResponseRedirect('/course_mgmt/my_courses')
-
-
 class CourseDetail(LoginRequiredMixin, generic.FormView):
 
     form_class = CourseDetailForm
@@ -455,13 +387,13 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
         for entry in course_details:
             if entry.user_id_id not in student_dict:
                 student_dict[entry.user_id_id] = OrderedDict()
-            student_dict[entry.user_id_id][entry.field_id_id] = entry.field_value
+                # adds the last progress of this student to the list
+                for progress in course_progress:
+                    if progress.user_id_id in student_dict:
+                        student_dict[progress.user_id_id]['progress_reached'] = progress.progress_reached
+                        student_dict[progress.user_id_id]['progress'] = progress.user_progress_id.progress_name
 
-        # adds the last progress of this student to the list
-        for progress in course_progress:
-            if progress.user_id_id in student_dict:
-                student_dict[progress.user_id_id]['progress'] = progress.user_progress_id.progress_name
-                student_dict[progress.user_id_id]['progress_reached'] = progress.progress_reached
+            student_dict[entry.user_id_id][entry.field_id_id] = entry.field_value
 
         # splits the student_dict in two different dicts for easier processing in the template
         student_complete_dict = OrderedDict()
