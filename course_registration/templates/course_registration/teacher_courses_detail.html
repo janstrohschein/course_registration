@@ -55,8 +55,10 @@
                     </tbody>
                 </table>
                 </div>
+                <div>
+                    <input type="submit" class="btn-link btn-xs" name="export_good" value="Export"><input type="submit" class="btn-link btn-xs" name="email_good" value="Send Email">
+                </div>
 
-                <input type="submit" class="btn-link btn-xs" name="export_good" value="Export"><input type="submit" class="btn-link btn-xs" name="email_good" value="Send Email">
             {% else %}
                 <h2>{% trans "Students at current progress" %}</h2>
                 <p> {% trans "No entries available" %}</p>
@@ -100,15 +102,20 @@
                     </tbody>
                 </table>
                 </div>
-                <input type="submit" class="btn-link btn-xs" name="export_late" value="Export"><input type="submit" class="btn-link btn-xs" name="email_late" value="Send Email">
+                <div>
+                    <input type="submit" class="btn-link btn-xs" name="export_late" value="Export"><input type="submit" class="btn-link btn-xs" name="email_late" value="Send Email">
+                </div>
+
             {% endif %}
             {% include "show_pagination.html"%}
             {% include "show_message.html"%}
             <div>
                 <a href="/course_mgmt/teacher_courses" class="btn btn-default">{% trans "Back" %}</a>
                 <input type="submit" class="btn btn-default" name="update_student_progress" value="Update">
+                {% if student_complete_list and student_incomplete_list %}
                 <input type="submit" class="btn btn-default" name="export" value="Export all">
                 <input type="submit" class="btn btn-default" name="email_all" value="Email to all">
+                {% endif %}
             </div>
             </form>
 

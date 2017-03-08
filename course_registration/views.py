@@ -413,8 +413,10 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
     def post(self, request, *args, **kwargs):
 
         course = Course_Iteration.objects.get(slug=kwargs['slug'])
-        student_complete_list = json.loads(request.POST['student_complete_list'])
-        student_incomplete_list = json.loads(request.POST['student_incomplete_list'])
+        if 'student_complete_list' in request.POST:
+            student_complete_list = json.loads(request.POST['student_complete_list'])
+        if 'student_incomplete_list' in request.POST:
+            student_incomplete_list = json.loads(request.POST['student_incomplete_list'])
 
 
         if 'update_course_progress' in request.POST:
@@ -471,10 +473,9 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             new_excel.write_student_list(course, field_list, student_list)
             new_excel.out_wb.close()
 
-            messages.success(request, 'Export finished!')
-
+            course_string = str(course.course_id.course_name) + ' (' + str(course.iteration_name) + ')'
             # sets filename
-            filename = str(course) + '.xlsx'
+            filename = course_string + '.xlsx'
 
             """sets the file content type an as excel spreadsheet,
             and sets it to be returned as a http response"""
@@ -507,8 +508,7 @@ class TeacherSendEmail(generic.View):
 
     def get(self, request, **kwargs):
 
-        return render(request, 'course_registration/teacher_send_email.html',
-                      )
+        return render(request, 'course_registration/teacher_send_email.html')
 
     def post(self, request, **kwargs):
         subject = request.session['email_information']['course']
