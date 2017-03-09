@@ -11,7 +11,8 @@
 
         <div class="col-md-8">
             <form action="{% url "teacher_field_add" %}" method="post">
-                <table class="table">
+                <div class="table-responsive">
+                <table class="table table-striped">
                     {% csrf_token %}
                     {% for field in form  %}
                         <tr>
@@ -20,6 +21,7 @@
                         </tr>
                     {% endfor  %}
                 </table>
+                </div>
                 <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
                 <input type="submit" class="btn btn-default" value="Submit" />
             </form>

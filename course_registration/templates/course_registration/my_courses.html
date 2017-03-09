@@ -11,6 +11,7 @@
         <div class="col-md-12">
           <h2>{% trans "Registered Courses" %}</h2>
             {% if course_list %}
+                <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                             <tr>
@@ -36,6 +37,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                </div>
             {% else %}
                 <p> {% trans "No entries available" %}</p>
             {% endif %}

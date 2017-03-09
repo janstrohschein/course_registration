@@ -12,6 +12,7 @@
         <form method="post">
             {% csrf_token %}
             {% if course_list %}
+                <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                             <tr>
@@ -53,6 +54,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                </div>
                 {% include "show_pagination.html"%}
                 <input type="submit" class="btn btn-default" name="update" value="Update">
 

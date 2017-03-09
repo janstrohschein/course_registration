@@ -42,7 +42,7 @@ class ExcelWriter():
         for key, student in student_list.items():
             row = []
 
-            for item in student:
+            for item in student.items():
                 row.append(item[1])
 
             ws.write_row(self.curr_row, 0, row)

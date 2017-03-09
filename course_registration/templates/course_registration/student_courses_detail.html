@@ -13,6 +13,7 @@
                 {% if progress_list %}
                     <form method="post">
                         {% csrf_token %}
+                    <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                                 <tr>
@@ -48,6 +49,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    </div>
                     <a href="{{ request.GET.next }}" class="btn btn-default">{% trans "Back" %}</a>
                     {% if is_teacher %}
                     <input type="submit" class="btn btn-default" name="update" value="Update">
