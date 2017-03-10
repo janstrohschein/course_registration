@@ -458,31 +458,41 @@ class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
             else:
                 student_list = {**student_complete_list, **student_incomplete_list}
 
-            pop_list = []
-            add_list = []
             add_last = []
+
+            # the field_ids are used as keys, but as they come from json they are
+            # numerals stored as strings. therefore they need to be recast to sort them properly.
+            # otherwise sort will result in '1', '10', '2'
             for student in student_list.items():
                 for key, value in student[1].items():
                     try:
-                        add_list.append((student[0], int(key), value))
+                        int(key)
                     except:
+                        # the fields 'progress' and 'progress_reached are not stored with
+                        # field_ids, therefore the cast will fail and we add them at the end
+                        # of the dict
                         add_last.append((student[0], key, value))
-                    pop_list.append((student[0], key))
 
-                for entry in pop_list:
-                    student_list[entry[0]].pop(entry[1])
-                add_list.sort(key=lambda x:x[1])
-                for entry in add_list:
-                    student_list[entry[0]][str(entry[1])] = entry[2]
 
+            # pop and add fields after iterating over all fields as the size of the
+            # dict cant change while looping
+            for entry in add_last:
+                student_list[entry[0]].pop(entry[1])
+
+            # sorts the entries for every student by
             for student in student_list:
-            #     student_list[student].items().sort(key = lambda x: int(x[1]))
                 student_list[student] = OrderedDict(sorted(student_list[student].items(), key= lambda x: int(x[0])))
+
+            # different layout between the html table and the output excel file makes the reverse
+            # for "progress" and "progress_reached" necessary, TEST if this is true, otherwise uncomment next line
+            #add_last.reverse()
             for entry in add_last:
                 student_list[entry[0]][entry[1]] = entry[2]
 
             field_list = []
 
+            # 'Fortschritt' and 'bestanden' are not fields required for registration, therefore they
+            # need to be added manually
             for field in fields:
                 field_list.append(str(field))
             field_list.append('Fortschritt')
