@@ -325,6 +325,12 @@ class TeacherCoursesAdd(generic.CreateView):
 
 
 class TeacherFieldAdd(generic.CreateView):
+    """
+    Teachers can add new fields to the course forms. Fields can have different
+    Types like EmailField or ChoiceField. EmailField has proper validation and
+    ChoiceFields can define a Dropdownfield for the form.
+
+    """
     model = Field
     template_name = 'course_registration/field_add.html'
     fields = '__all__'
@@ -332,6 +338,12 @@ class TeacherFieldAdd(generic.CreateView):
 
 
 class TeacherIterationAdd(generic.CreateView):
+    """
+    Iterations make the course and the corresponding form reusable. A iteration
+    can be the semester the course takes place.
+
+    """
+
     model = Course_Iteration
     template_name = 'course_registration/iteration_add.html'
     form_class = TeacherIterationAddForm
