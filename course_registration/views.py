@@ -356,6 +356,10 @@ class TeacherIterationAdd(generic.CreateView):
 
 
 class TeacherIterationDelete(generic.DeleteView):
+    """
+    Deletes a single iteration of a course. Does not delete the course itself!
+    Right now courses cant be deleted.
+    """
     model = Course_Iteration
     template_name = 'course_registration/iteration_delete.html'
     success_url = '/course_mgmt/teacher_courses'
@@ -369,6 +373,14 @@ class TeacherIterationDelete(generic.DeleteView):
 
 
 class TeacherCoursesDetail(SuccessMessageMixin, generic.UpdateView):
+    """
+    Teachers can see the progress of their students in the course. Progress
+    is divided in "on time" and "late". Teachers can also update the course progress.
+    In this case new course progress' for all students will be created with "progress_reached"=false.
+    It is also possible to bulk-update those student progress'.
+    The teacher can also export the lists of students or send emails to the participants.
+
+    """
     model = Course_Iteration
     template_name = 'course_registration/teacher_courses_detail.html'
     form_class = CourseProgressUpdateForm
