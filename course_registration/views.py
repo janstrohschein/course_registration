@@ -250,17 +250,24 @@ class TeacherCourses(generic.ListView):
         :return: refreshes the page with updated courses
         """
 
+        all_ids = request.POST.getlist('all_ids')
+
         if 'course_registration_id' in request.POST:
             positive_ids, negative_ids = subtract_ids(request, 'course_registration_id')
 
             Course_Iteration.objects.filter(id__in=positive_ids).update(course_registration=True)
             Course_Iteration.objects.filter(id__in=negative_ids).update(course_registration=False)
 
+        else:
+            Course_Iteration.objects.filter(id__in=all_ids).update(course_registration=False)
+
         if 'course_active_id' in request.POST:
             positive_ids, negative_ids = subtract_ids(request, 'course_active_id')
 
             Course_Iteration.objects.filter(id__in=positive_ids).update(course_active=True)
             Course_Iteration.objects.filter(id__in=negative_ids).update(course_active=False)
+        else:
+            Course_Iteration.objects.filter(id__in=all_ids).update(course_active=False)
 
         return HttpResponseRedirect('/course_mgmt/teacher_courses')
 
