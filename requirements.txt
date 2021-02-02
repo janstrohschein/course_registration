@@ -1,5 +1,5 @@
 beautifulsoup4==4.4.1
-bleach==3.1.4
+bleach==3.3.0
 chardet==2.3.0
 Django==1.11.29
 django-contrib-comments==1.6.2
