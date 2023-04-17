@@ -4,7 +4,7 @@ chardet==2.3.0
 Django==2.2.24
 django-contrib-comments==1.6.2
 filebrowser-safe==0.4.3
-future==0.15.2
+future==0.18.3
 grappelli-safe==0.4.2
 html5lib==1.0b8
 keyring==9.0
